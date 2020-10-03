@@ -1,4 +1,4 @@
-#include "lab2.h"
+﻿#include "lab2.h"
 
 int main(void) {
 	double p = 1;
@@ -6,7 +6,13 @@ int main(void) {
 	while (p != -1) {
 		std::cout << "Enter parametr. -1 for the end.\n";
 		getn(p);
-		X.set(p);
+		try {
+			X.set(p);
+		}
+		catch (const std::exception&) {
+			std::cout << "Failed to set such parameter." << std::endl;
+			continue;
+		}
 		std::cout << "Enter angle.\n";
 		double an;
 		getn(an);

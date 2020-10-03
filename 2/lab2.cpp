@@ -10,7 +10,7 @@ Tr::Tr(double p) {
 		a = p;
 	}
 	else {
-		throw "Negative parametr.";
+		throw std::exception("Negative parametr.");
 	}
 }
 
@@ -23,7 +23,7 @@ void Tr::set(double new_p) {
 		a = new_p;
 	}
 	else {
-		throw "Negative parametr.";
+		throw std::exception("Negative parametr.");
 	}
 }
 

@@ -1,21 +1,21 @@
-#include "mylib.h"
+п»ї#include "mylib.h"
 
-class Tr	// трактрисса
+class Tr	// С‚СЂР°РєС‚СЂРёСЃСЃР°
 {
 public:
-	Tr();						// конструктор
-	Tr(double p);				// конструктор
-	~Tr();						// деструктор
-	void set(double new_p);		// изменение параметра кривой
+	Tr();						// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+	Tr(double p);				// РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+	~Tr();						// РґРµСЃС‚СЂСѓРєС‚РѕСЂ
+	void set(double new_p);		// РёР·РјРµРЅРµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° РєСЂРёРІРѕР№
 	
-	double get(void) const;				// получение параметра кривой
+	double get(void) const;				// РїРѕР»СѓС‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° РєСЂРёРІРѕР№
 	void coord(double& x, 
-		double& y, double n_pi) const;	// получение координат по углу
-	double len(double n_pi) const;		// возвращает длину дуги
-	double rad(double n_pi) const;		// радиус кривизны
-	double area(void) const;			// площадь полосы
-	double surface(void) const;			// поверхность вращения
-	double volume(void) const;			// объем тела вращения
+		double& y, double n_pi) const;	// РїРѕР»СѓС‡РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ РїРѕ СѓРіР»Сѓ
+	double len(double n_pi) const;		// РІРѕР·РІСЂР°С‰Р°РµС‚ РґР»РёРЅСѓ РґСѓРіРё
+	double rad(double n_pi) const;		// СЂР°РґРёСѓСЃ РєСЂРёРІРёР·РЅС‹
+	double area(void) const;			// РїР»РѕС‰Р°РґСЊ РїРѕР»РѕСЃС‹
+	double surface(void) const;			// РїРѕРІРµСЂС…РЅРѕСЃС‚СЊ РІСЂР°С‰РµРЅРёСЏ
+	double volume(void) const;			// РѕР±СЉРµРј С‚РµР»Р° РІСЂР°С‰РµРЅРёСЏ
 private:
 	double a;
 };

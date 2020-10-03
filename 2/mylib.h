@@ -1,12 +1,12 @@
-// ошибки памяти
+п»ї// РѕС€РёР±РєРё РїР°РјСЏС‚Рё
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
-// ввод
+// РІРІРѕРґ
 #include <iostream>
 #include <limits>
 
-// функция ввода числа
+// С„СѓРЅРєС†РёСЏ РІРІРѕРґР° С‡РёСЃР»Р°
 template <class T>
 int getn(T& a){
 	using std::cin;
