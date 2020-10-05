@@ -1,9 +1,4 @@
-#include "lab2.h"
-
-Tr::Tr()
-{
-	a = 1;
-}
+п»ї#include "lab2.h"
 
 Tr::Tr(double p) {
 	if (p > 0) {
@@ -12,10 +7,6 @@ Tr::Tr(double p) {
 	else {
 		throw std::exception("Negative parametr.");
 	}
-}
-
-Tr::~Tr()
-{
 }
 
 void Tr::set(double new_p) {
@@ -27,30 +18,17 @@ void Tr::set(double new_p) {
 	}
 }
 
-double Tr::get(void) const {
-	return a;
-}
-
 void Tr::coord(double& x, double& y, double n_pi) const {
 	const double pi = 3.141592;
 	n_pi = abs(n_pi) - trunc(abs(n_pi));
 	y = a * sin(n_pi * pi);
-	if (n_pi)
-	{
-		x = a * cos(n_pi * pi) + a * log(tan(n_pi * pi / 2));
-	}
-	else { // если угол нулевой, то y = машинной бесконечности
-		x = std::numeric_limits<double>::max();
-	}
+	x = a * cos(n_pi * pi) + a * log(tan(n_pi * pi / 2));
 }
 
 double Tr::len(double n_pi) const {
 	const double pi = 3.141592;
 	n_pi = abs(n_pi) - trunc(abs(n_pi));
-	if (n_pi) {
-		return a * log(1 / sin(n_pi * pi));
-	}
-	return std::numeric_limits<double>::max();
+	return a * log(1 / sin(n_pi * pi));
 }
 
 double Tr::rad(double n_pi) const {
