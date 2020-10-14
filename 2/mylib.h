@@ -1,6 +1,9 @@
-﻿// ошибки памяти
-#define _CRTDBG_MAP_ALLOC
+﻿// стандартное
+#include <math.h>
+#include <corecrt_math_defines.h>
 #include <stdlib.h>
+// ошибки памяти
+#define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 // ввод
 #include <iostream>

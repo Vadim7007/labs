@@ -7,20 +7,21 @@ public:
 		set(1);
 	};				// конструктор
 	Tr(double p);					// конструктор
-	Tr set(double new_p);			// изменение параметра кривой
+	Tr& set(double new_p);			// изменение параметра кривой
 	
 	double get(void) const {		// получение параметра кривой
 		return a;
 	};
 	void coord(double& x, 
 			   double& y, 
-			   double n_pi) const;	// получение координат по углу
-	double len(double n_pi) const;		// возвращает длину дуги
-	double rad(double n_pi) const;		// радиус кривизны
+			   double n) const;		// получение координат по углу
+	double len(double n) const;		// возвращает длину дуги
+	double rad(double n) const;		// радиус кривизны
 	double area(void) const;			// площадь полосы
 	double surface(void) const;			// поверхность вращения
 	double volume(void) const;			// объем тела вращения
 private:
 	double a;
-	const double pi = 3.141592;
+	const double pi = M_PI;
+	double engle_num(double n) const;
 };
