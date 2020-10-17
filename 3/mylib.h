@@ -1,15 +1,15 @@
-// стандартное
+п»ї// СЃС‚Р°РЅРґР°СЂС‚РЅРѕРµ
 #include <math.h>
 #include <corecrt_math_defines.h>
 #include <stdlib.h>
-// ошибки памяти
+// РѕС€РёР±РєРё РїР°РјСЏС‚Рё
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-// ввод
+// РІРІРѕРґ
 #include <iostream>
 #include <limits>
 
-// функция ввода числа
+// С„СѓРЅРєС†РёСЏ РІРІРѕРґР° С‡РёСЃР»Р°
 template <class T>
 int getn(T& a) {
 	using std::cin;
