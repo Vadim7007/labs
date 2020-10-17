@@ -30,6 +30,8 @@ protected:
 	}
 };
 
+Tr y;
+
 TEST_F(TrTest, Test_constructor_1) {
 	for (int i = 0; i < N; i++)
 	{
@@ -94,6 +96,22 @@ TEST(Test_Negative, Test_set_4) {
 	EXPECT_THROW(x.set(-1), std::exception);
 }
 
+TEST_F(TrTest, Test_set_5) {
+	try
+	{
+		y.set(3);
+	}
+	catch (const std::exception& exception)
+	{
+		std::cout << exception.what() << std::endl;
+	}
+	ASSERT_DOUBLE_EQ(3.00, y.get());
+}
+
+TEST(Test_Negative, Test_set_6) {
+	EXPECT_THROW(y.set(-1), std::exception);
+}
+
 TEST_F(TrTest, Test_coord_1) {
 	double x1, y1;
 	for (int i = 0; i < N; i++) {
@@ -121,6 +139,16 @@ TEST(Test_Negative, Test_coord_3) {
 	EXPECT_THROW(x.coord(x1, y1, 200), std::exception);
 }
 
+TEST_F(TrTest, Test_coord_4) {
+	double x1, y1;
+	ASSERT_NO_THROW(y.coord(x1, y1, 3));
+}
+
+TEST(Test_Negative, Test_coord_5) {
+	double x1, y1;
+	EXPECT_THROW(y.coord(x1, y1, 250), std::exception);
+}
+
 TEST_F(TrTest, Test_len_1) {
 	for (int i = 0; i < N; i++) {
 		double c = a[i]->get();
@@ -142,6 +170,14 @@ TEST(Test_Negative, Test_len_2) {
 TEST(Test_Negative, Test_len_3) {
 	Tr x;
 	EXPECT_THROW(x.len(200), std::exception);
+}
+
+TEST_F(TrTest, Test_len_4) {
+	ASSERT_NO_THROW(y.len(3));
+}
+
+TEST(Test_Negative, Test_len_5) {
+	EXPECT_THROW(y.len(250), std::exception);
 }
 
 TEST_F(TrTest, Test_rad_1) {
@@ -170,6 +206,14 @@ TEST(Test_Negative, Test_rad_3) {
 	EXPECT_THROW(x.rad(200), std::exception);
 }
 
+TEST_F(TrTest, Test_rad_4) {
+	ASSERT_NO_THROW(y.rad(3));
+}
+
+TEST(Test_Negative, Test_rad_5) {
+	EXPECT_THROW(y.rad(250), std::exception);
+}
+
 TEST_F(TrTest, Test_area_1) {
 	for (int i = 0; i < N; i++) {
 		double c = a[i]->get();
@@ -177,6 +221,10 @@ TEST_F(TrTest, Test_area_1) {
 
 		ASSERT_DOUBLE_EQ(area, a[i]->area());
 	}
+}
+
+TEST_F(TrTest, Test_area_2) {
+	ASSERT_NO_THROW(y.area());
 }
 
 TEST_F(TrTest, Test__surface_1) {
@@ -188,6 +236,10 @@ TEST_F(TrTest, Test__surface_1) {
 	}
 }
 
+TEST_F(TrTest, Test_surface_2) {
+	ASSERT_NO_THROW(y.surface());
+}
+
 TEST_F(TrTest, Test__volume_1) {
 	for (int i = 0; i < N; i++) {
 		double c = a[i]->get();
@@ -197,7 +249,12 @@ TEST_F(TrTest, Test__volume_1) {
 	}
 }
 
+TEST_F(TrTest, Test_volume_2) {
+	ASSERT_NO_THROW(y.volume());
+}
+
 int main(int argc, char* argv[]) {
+	::testing::FLAGS_gtest_shuffle = 1;
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
