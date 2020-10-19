@@ -11,7 +11,7 @@
 
 // функция ввода числа
 template <class T>
-int getn(T& a){
+int getn(T& a) {
 	using std::cin;
 	cin >> a;
 	while (!cin.good())
