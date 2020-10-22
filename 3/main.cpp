@@ -10,25 +10,27 @@ int main(void) {
 		std::cout << " 1 - Create abc of length n" << std::endl;
 		std::cout << " 2 - Create abc from string" << std::endl;
 		getn(k);
+		std::cin.get();
 		if (k > -1 && k < 3)
 		{
+			ABC_class::Alphabet a;
 			switch (k)
 			{
 				case 0:
-					ABC_class::Alphabet a;
+					a = ABC_class::Alphabet();
 					break;
 				case 1:
 					int n;
 					getn(n);
-					ABC_class::Alphabet a(n);
+					a = ABC_class::Alphabet(n);
 					break;
 				case 2:
-
+					a = ABC_class::Alphabet(getstr(std::cin));
 					break;
-
 			}
+			Dialog(a);
 		}
+		std::cin.get();
 	}
 	_CrtDumpMemoryLeaks();
-	return 0;
 }

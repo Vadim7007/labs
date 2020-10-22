@@ -6,13 +6,15 @@ namespace ABC_class {
 	public:
 		Alphabet();
 		Alphabet(const int k);
+		Alphabet(const char& c); //
 		Alphabet(const char* str);
 		friend std::ostream& operator<<(std::ostream& ostream, const Alphabet& a);
 		friend std::istream& operator>>(std::istream& istream, Alphabet& a);
-		friend Alphabet& operator+=(Alphabet& a, const char& c);
+		Alphabet& operator+=(const char& c); // Зачем, работает и так
 		friend Alphabet operator+(const Alphabet& a, const Alphabet& b);
 		bool is_char(const char& c) const;
-		char* coding(const char* str, int k, const char* mode) const;
+		int coding(const char* plain_text, int size, 
+					 int offset, const bool mode, char* cipher_text) const;
 
 	private:
 		int get_index(const char& c) const;
@@ -21,3 +23,5 @@ namespace ABC_class {
 		char abc[N];				// алфавит
 	};
 };
+
+void Dialog(ABC_class::Alphabet& a);
