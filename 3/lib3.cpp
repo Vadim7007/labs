@@ -60,16 +60,7 @@ namespace ABC_class {
 
 	// при ошибке содержимое обьекта "a" не теряется
 	std::istream& operator>>(std::istream& istream, Alphabet& a) {
-		char* str;
-		try {
-			str = new char[a.N];
-		}
-		catch (const std::exception&) {
-			istream.setstate(std::ios_base::failbit);
-			//istream.setstate(std::ios_base::goodbit);
-			return istream;
-		}
-		istream.getline(str, a.N);	// a.N
+		char* str = getstr(istream);
 		Alphabet b;
 		try
 		{
@@ -145,26 +136,38 @@ namespace ABC_class {
 		int offset, const bool mode, char* cipher_text) const {
 
 		// проверка на правильность данных
-		if (strlen(plain_text) != size || strlen(cipher_text) != size)
+		if (strlen(plain_text) != size)
 		{
 			std::cout << "Invalid size of text" << std::endl;
 			return -1;
 		}
+		try
+		{
+			cipher_text[size];
+		}
+		catch (const std::exception& exception)
+		{
+			std::cout << exception.what() << std::endl;
+			return -1;
+		}
 
+		// замена
 		for (int i = 0; i < size; i++)
 		{
 			int j = this->get_index(plain_text[i]);
 			if (j == -1) {
 				std::cout << "Incomplete alphabet" << std::endl;
+				cipher_text[0] = '\0';
 				return -1;
 			}
 			if (mode) {
 				cipher_text[i] = this->abc[(j + offset) % this->n];
 			}
 			else {
-				cipher_text[i] = this->abc[(offset - j + this->n) % this->n];
+				cipher_text[i] = this->abc[(j - offset + offset*this->n) % this->n];
 			}
 		}
+		cipher_text[size] = '\0';
 		return 0;
 	}
 	}
@@ -191,13 +194,25 @@ void Dialog(ABC_class::Alphabet& a) {
 					std::cout << "Enter new alphabet" << std::endl;
 					ABC_class::Alphabet b;
 					std::cin >> b;
-					a = a + b;
+					try {
+						a = a + b;
+					}
+					catch (const std::exception&)
+					{
+					}
 					break;
 				}
 			case 1: {
 				char c;
 				std::cin.get(c);
-				a += c;
+				try
+				{
+					a += c;
+				}
+				catch (const std::exception&)
+				{
+
+				}
 				break;
 			}
 			case 2: {
@@ -209,15 +224,18 @@ void Dialog(ABC_class::Alphabet& a) {
 				char* cipher;
 				try
 				{
-					cipher = new char[strlen(str)];
+					cipher = new char[strlen(str)+1]; // +1 для '\0'
 				}
 				catch (const std::exception& exception)
 				{
 					std::cout << exception.what() << std::endl;
+					delete[]str;
 					break;
 				}
 				a.coding(str, strlen(str), k, 1, cipher);
 				std::cout << cipher << std::endl;
+				delete[]str;
+				delete[]cipher;
 				break;
 			}
 			case 3: {
@@ -229,21 +247,25 @@ void Dialog(ABC_class::Alphabet& a) {
 				char* cipher;
 				try
 				{
-					cipher = new char[strlen(str)];
+					cipher = new char[strlen(str) + 1]; // +1 для '\0'
 				}
 				catch (const std::exception& exception)
 				{
 					std::cout << exception.what() << std::endl;
+					delete[]str;
 					break;
 				}
 				a.coding(str, strlen(str), k, 0, cipher);
 				std::cout << cipher << std::endl;
+				delete[]str;
+				delete[]cipher;
 				break;
 			}
 			case 4: {
 				char c;
 				std::cin.get(c);
 				std::cout << a.is_char(c) << std::endl;
+				std::cin.get();
 				break;
 			}
 			case 5: {

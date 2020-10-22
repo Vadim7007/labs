@@ -33,5 +33,6 @@ char* getstr(std::istream& istream) {
 		istream.get(c);
 		str[i - 1] = c;
 	} while (c !=  '\n');
+	str[i - 1] = '\0';
 	return str;
 }

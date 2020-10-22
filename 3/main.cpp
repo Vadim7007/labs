@@ -3,6 +3,7 @@
 int main(void) {
 	int k = 0;
 	while (k != -1) {
+		// вывод меню и выбор действия
 		system("cls");
 		std::cout << "Enter action" << std::endl;
 		std::cout << "-1 - Exit" << std::endl;
@@ -11,8 +12,10 @@ int main(void) {
 		std::cout << " 2 - Create abc from string" << std::endl;
 		getn(k);
 		std::cin.get();
+
 		if (k > -1 && k < 3)
 		{
+			// создание объекта
 			ABC_class::Alphabet a;
 			switch (k)
 			{
@@ -28,6 +31,7 @@ int main(void) {
 					a = ABC_class::Alphabet(getstr(std::cin));
 					break;
 			}
+			// работа с объектом
 			Dialog(a);
 		}
 		std::cin.get();

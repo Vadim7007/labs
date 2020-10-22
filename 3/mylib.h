@@ -59,5 +59,5 @@ T* r_alloc(const T* array, const int new_size, int length) {
 	return n_array;
 }
 
-// функция ввода строки
+// функция ввода строки произвольной длины
 char* getstr(std::istream& istream);
