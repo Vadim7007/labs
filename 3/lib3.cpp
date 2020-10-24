@@ -1,6 +1,6 @@
 ﻿#include "lib3.h"
 
-namespace ABC_class {
+namespace ABC_class_a {
 	Alphabet::Alphabet()
 	{
 		n = 0;
@@ -42,6 +42,7 @@ namespace ABC_class {
 			else {	// если элемент новый
 				abc[m] = str[i];
 				m++;
+				n = m;
 			}
 			if (m > N) {	// если превышен максимальный размер алфавита
 				throw std::exception("Exceeded maximum alphabet size.\n");
@@ -164,117 +165,409 @@ namespace ABC_class {
 				cipher_text[i] = this->abc[(j + offset) % this->n];
 			}
 			else {
-				cipher_text[i] = this->abc[(j - offset + offset*this->n) % this->n];
+				cipher_text[i] = this->abc[(j - offset + offset * this->n) % this->n];
 			}
 		}
 		cipher_text[size] = '\0';
 		return 0;
 	}
-	}
 
-void Dialog(ABC_class::Alphabet& a) {
-	int k = 0;
-	while (k != -1) {
-		system("cls");
-		std::cout << "Enter action" << std::endl;
-		std::cout << "-1 - Exit" << std::endl;
-		std::cout << " 0 - Add 2 alphabets" << std::endl;
-		std::cout << " 1 - Add symbol" << std::endl;
-		std::cout << " 2 - Encoding string" << std::endl;
-		std::cout << " 3 - Decoding string" << std::endl;
-		std::cout << " 4 - Determining if a symbol is" << std::endl;
-		std::cout << " 5 - Output alphabet" << std::endl;
-		getn(k);
-		std::cin.get();
-		if (k > -1 && k < 6)
-		{
-			switch (k)
+	void Dialog(ABC_class_a::Alphabet& a) {
+		int k = 0;
+		while (k != -1) {
+			system("cls");
+			std::cout << "Enter action" << std::endl;
+			std::cout << "-1 - Exit" << std::endl;
+			std::cout << " 0 - Add 2 alphabets" << std::endl;
+			std::cout << " 1 - Add symbol" << std::endl;
+			std::cout << " 2 - Encoding string" << std::endl;
+			std::cout << " 3 - Decoding string" << std::endl;
+			std::cout << " 4 - Determining if a symbol is" << std::endl;
+			std::cout << " 5 - Output alphabet" << std::endl;
+			getn(k);
+			if (k > -1 && k < 6)
 			{
-			case 0:{
+				switch (k)
+				{
+				case 0: {
 					std::cout << "Enter new alphabet" << std::endl;
-					ABC_class::Alphabet b;
+					ABC_class_a::Alphabet b;
 					std::cin >> b;
 					try {
 						a = a + b;
 					}
-					catch (const std::exception&)
+					catch (const std::exception& exception)
 					{
+						std::cout << exception.what() << std::endl;
+						std::cin.ignore();
 					}
 					break;
 				}
-			case 1: {
-				char c;
-				std::cin.get(c);
-				try
-				{
-					a += c;
-				}
-				catch (const std::exception&)
-				{
-
-				}
-				break;
-			}
-			case 2: {
-				std::cout << "Enter string and key" << std::endl;
-				char* str = getstr(std::cin);
-				int k;
-				getn(k);
-				std::cin.get();
-				char* cipher;
-				try
-				{
-					cipher = new char[strlen(str)+1]; // +1 для '\0'
-				}
-				catch (const std::exception& exception)
-				{
-					std::cout << exception.what() << std::endl;
-					delete[]str;
+				case 1: {
+					char c;
+					std::cin.get(c);
+					try
+					{
+						a += c;
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						std::cin.ignore();
+					}
 					break;
 				}
-				a.coding(str, strlen(str), k, 1, cipher);
-				std::cout << cipher << std::endl;
-				delete[]str;
-				delete[]cipher;
-				break;
-			}
-			case 3: {
-				std::cout << "Enter string and key" << std::endl;
-				char* str = getstr(std::cin);
-				int k;
-				getn(k);
-				std::cin.get();
-				char* cipher;
-				try
-				{
-					cipher = new char[strlen(str) + 1]; // +1 для '\0'
-				}
-				catch (const std::exception& exception)
-				{
-					std::cout << exception.what() << std::endl;
+				case 2: {
+					std::cout << "Enter string and key" << std::endl;
+					char* str = getstr(std::cin);
+					int k;
+					getn(k);
+					std::cin.get();
+					char* cipher;
+					try
+					{
+						cipher = new char[strlen(str) + 1]; // +1 для '\0'
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						delete[]str;
+						std::cin.ignore();
+						break;
+					}
+					a.coding(str, strlen(str), k, 1, cipher);
+					std::cout << cipher << std::endl;
 					delete[]str;
+					delete[]cipher;
+					std::cin.ignore();
 					break;
 				}
-				a.coding(str, strlen(str), k, 0, cipher);
-				std::cout << cipher << std::endl;
-				delete[]str;
-				delete[]cipher;
-				break;
-			}
-			case 4: {
-				char c;
-				std::cin.get(c);
-				std::cout << a.is_char(c) << std::endl;
-				std::cin.get();
-				break;
-			}
-			case 5: {
-				std::cout << a << std::endl;
-				break;
-			}
+				case 3: {
+					std::cout << "Enter string and key" << std::endl;
+					char* str = getstr(std::cin);
+					int k;
+					getn(k);
+					char* cipher;
+					try
+					{
+						cipher = new char[strlen(str) + 1]; // +1 для '\0'
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						delete[]str;
+						std::cin.ignore();
+						break;
+					}
+					a.coding(str, strlen(str), k, 0, cipher);
+					std::cout << cipher << std::endl;
+					delete[]str;
+					delete[]cipher;
+					std::cin.ignore();
+					break;
+				}
+				case 4: {
+					char c;
+					std::cin.get(c);
+					std::cin.ignore();
+					std::cout << a.is_char(c) << std::endl;
+					std::cin.ignore();
+					break;
+				}
+				case 5: {
+					std::cout << a << std::endl;
+					std::cin.ignore();
+					break;
+				}
+				}
 			}
 		}
-		std::cin.get();
+		return;
 	}
-	return;
+}
+
+namespace ABC_class_b {
+	Alphabet::Alphabet()
+	{
+		n = 0;
+	}
+
+	// может вызвать исключение
+	Alphabet::Alphabet(const int k)
+	{
+		if (k > N)
+		{
+			throw std::exception("Exceeded maximum alphabet size.\n");
+		}
+		else
+		{
+			n = k;
+			for (int i = 0; i < k; i++)
+			{
+				abc[i] = i + 48;
+			}
+		}
+	}
+
+	Alphabet::Alphabet(const char& c) {
+		abc[0] = c;
+		n = 1;
+	}
+
+	// может вызвать исключение
+	Alphabet::Alphabet(const char* str) {
+		int k = strlen(str);			// размер строки
+		int m = 0;						// текущий размер алфавита
+		for (int i = 0; i < k; i++) {	// для каждого символа из строки
+
+			// проверка на существование этого символа в алфавите
+			if (this->is_char(str[i]))	// если такой элемент был найден
+			{
+				continue;
+			}
+			else {	// если элемент новый
+				abc[m] = str[i];
+				m++;
+				n = m;
+			}
+			if (m > N) {	// если превышен максимальный размер алфавита
+				throw std::exception("Exceeded maximum alphabet size.\n");
+			}
+		}
+		n = m;
+	}
+
+	std::ostream& operator<<(std::ostream& ostream, const Alphabet& a) {
+		for (int i = 0; i < a.n; i++)
+		{
+			ostream << a.abc[i];
+		}
+		return ostream;
+	}
+
+	// при ошибке содержимое обьекта "a" не теряется
+	std::istream& operator>>(std::istream& istream, Alphabet& a) {
+		char* str = getstr(istream);
+		Alphabet b;
+		try
+		{
+			b = Alphabet(str);
+		}
+		catch (const std::exception&)
+		{
+			istream.setstate(std::ios_base::failbit);
+			//istream.setstate(std::ios_base::goodbit);
+			delete[] str;
+			return istream;
+		}
+		a = b;
+		delete[] str;
+		return istream;
+	}
+
+	// добавление символа в алфавит
+	// может вызвать исключение
+	Alphabet& Alphabet::operator+=(const char& c) {
+		if (this->n == this->N)
+		{
+			throw std::exception("Exceeded maximum alphabet size.\n");
+		}
+		if (this->is_char(c)) {
+			return *this;
+		}
+		else {
+			this->abc[this->n] = c;
+			this->n++;
+			return *this;
+		}
+	}
+
+	// сложение двух алфавитов
+	// может вызвать исключение
+	Alphabet operator+(const Alphabet& a, const Alphabet& b) {
+		Alphabet c = a;
+		for (int i = 0; i < b.n; i++)
+		{
+			c += b.abc[i];
+		}
+		return c;
+	}
+
+	// проверка на существованрие символа в алфавите
+	bool Alphabet::is_char(const char& c) const {
+		for (int i = 0; i < this->n; i++)
+		{
+			if (this->abc[i] == c)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// возвращает индекс символа в алфавите или -1, если его нет
+	int Alphabet::get_index(const char& c) const {
+		for (int i = 0; i < this->n; i++)
+		{
+			if (this->abc[i] == c)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	// кодирование и декодирование строки
+	// может вернуть -1 в случае ошибки
+	int Alphabet::coding(const char* plain_text, int size,
+		int offset, const bool mode, char* cipher_text) const {
+
+		// проверка на правильность данных
+		if (strlen(plain_text) != size)
+		{
+			std::cout << "Invalid size of text" << std::endl;
+			return -1;
+		}
+		try
+		{
+			cipher_text[size];
+		}
+		catch (const std::exception& exception)
+		{
+			std::cout << exception.what() << std::endl;
+			return -1;
+		}
+
+		// замена
+		for (int i = 0; i < size; i++)
+		{
+			int j = this->get_index(plain_text[i]);
+			if (j == -1) {
+				std::cout << "Incomplete alphabet" << std::endl;
+				cipher_text[0] = '\0';
+				return -1;
+			}
+			if (mode) {
+				cipher_text[i] = this->abc[(j + offset) % this->n];
+			}
+			else {
+				cipher_text[i] = this->abc[(j - offset + offset * this->n) % this->n];
+			}
+		}
+		cipher_text[size] = '\0';
+		return 0;
+	}
+
+	void Dialog(ABC_class_b::Alphabet& a) {
+		int k = 0;
+		while (k != -1) {
+			system("cls");
+			std::cout << "Enter action" << std::endl;
+			std::cout << "-1 - Exit" << std::endl;
+			std::cout << " 0 - Add 2 alphabets" << std::endl;
+			std::cout << " 1 - Add symbol" << std::endl;
+			std::cout << " 2 - Encoding string" << std::endl;
+			std::cout << " 3 - Decoding string" << std::endl;
+			std::cout << " 4 - Determining if a symbol is" << std::endl;
+			std::cout << " 5 - Output alphabet" << std::endl;
+			getn(k);
+			if (k > -1 && k < 6)
+			{
+				switch (k)
+				{
+				case 0: {
+					std::cout << "Enter new alphabet" << std::endl;
+					ABC_class_b::Alphabet b;
+					std::cin >> b;
+					try {
+						a = a + b;
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						std::cin.ignore();
+					}
+					break;
+				}
+				case 1: {
+					char c;
+					std::cin.get(c);
+					try
+					{
+						a += c;
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						std::cin.ignore();
+					}
+					break;
+				}
+				case 2: {
+					std::cout << "Enter string and key" << std::endl;
+					char* str = getstr(std::cin);
+					int k;
+					getn(k);
+					std::cin.get();
+					char* cipher;
+					try
+					{
+						cipher = new char[strlen(str) + 1]; // +1 для '\0'
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						delete[]str;
+						std::cin.ignore();
+						break;
+					}
+					a.coding(str, strlen(str), k, 1, cipher);
+					std::cout << cipher << std::endl;
+					delete[]str;
+					delete[]cipher;
+					std::cin.ignore();
+					break;
+				}
+				case 3: {
+					std::cout << "Enter string and key" << std::endl;
+					char* str = getstr(std::cin);
+					int k;
+					getn(k);
+					char* cipher;
+					try
+					{
+						cipher = new char[strlen(str) + 1]; // +1 для '\0'
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						delete[]str;
+						std::cin.ignore();
+						break;
+					}
+					a.coding(str, strlen(str), k, 0, cipher);
+					std::cout << cipher << std::endl;
+					delete[]str;
+					delete[]cipher;
+					std::cin.ignore();
+					break;
+				}
+				case 4: {
+					char c;
+					std::cin.get(c);
+					std::cin.ignore();
+					std::cout << a.is_char(c) << std::endl;
+					std::cin.ignore();
+					break;
+				}
+				case 5: {
+					std::cout << a << std::endl;
+					std::cin.ignore();
+					break;
+				}
+				}
+			}
+		}
+		return;
+	}
 }

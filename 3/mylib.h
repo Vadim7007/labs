@@ -19,9 +19,11 @@ int getn(T& a) {
 	{
 		cin.clear();
 		cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		cin.ignore();
 		cin.clear();
 		cin >> a;
 	}
+	cin.ignore(1);
 	return 1;
 }
 
@@ -50,7 +52,7 @@ T* r_alloc(const T* array, const int new_size, int length) {
 		}
 		catch (const std::exception&)
 		{
-			delete[] array;
+			delete[] n_array;
 			return nullptr;
 		}
 	}

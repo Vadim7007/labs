@@ -11,30 +11,29 @@ int main(void) {
 		std::cout << " 1 - Create abc of length n" << std::endl;
 		std::cout << " 2 - Create abc from string" << std::endl;
 		getn(k);
-		std::cin.get();
-
 		if (k > -1 && k < 3)
 		{
 			// создание объекта
-			ABC_class::Alphabet a;
+			ABC_class_b::Alphabet a;
 			switch (k)
 			{
 				case 0:
-					a = ABC_class::Alphabet();
+					a = ABC_class_b::Alphabet();
 					break;
 				case 1:
 					int n;
 					getn(n);
-					a = ABC_class::Alphabet(n);
+					a = ABC_class_b::Alphabet(n);
 					break;
 				case 2:
-					a = ABC_class::Alphabet(getstr(std::cin));
+					char* str = getstr(std::cin);
+					a = ABC_class_b::Alphabet(str);
+					delete[] str;
 					break;
 			}
 			// работа с объектом
-			Dialog(a);
+			ABC_class_b::Dialog(a);
 		}
-		std::cin.get();
 	}
 	_CrtDumpMemoryLeaks();
 }
