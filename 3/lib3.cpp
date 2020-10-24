@@ -51,16 +51,16 @@ namespace ABC_class_a {
 		n = m;
 	}
 
-	std::ostream& operator<<(std::ostream& ostream, const Alphabet& a) {
-		for (int i = 0; i < a.n; i++)
+	std::ostream& Alphabet:: output(std::ostream& ostream) {
+		for (int i = 0; i < this->n; i++)
 		{
-			ostream << a.abc[i];
+			ostream << this->abc[i];
 		}
 		return ostream;
 	}
 
-	// при ошибке содержимое обьекта "a" не теряется
-	std::istream& operator>>(std::istream& istream, Alphabet& a) {
+	// при ошибке содержимое обьекта не теряется
+	std::istream& input(std::istream& istream, Alphabet& a) {
 		char* str = getstr(istream);
 		Alphabet b;
 		try
@@ -70,7 +70,6 @@ namespace ABC_class_a {
 		catch (const std::exception&)
 		{
 			istream.setstate(std::ios_base::failbit);
-			//istream.setstate(std::ios_base::goodbit);
 			delete[] str;
 			return istream;
 		}
@@ -81,7 +80,7 @@ namespace ABC_class_a {
 
 	// добавление символа в алфавит
 	// может вызвать исключение
-	Alphabet& Alphabet::operator+=(const char& c) {
+	Alphabet Alphabet::add(const char& c) {
 		if (this->n == this->N)
 		{
 			throw std::exception("Exceeded maximum alphabet size.\n");
@@ -98,11 +97,11 @@ namespace ABC_class_a {
 
 	// сложение двух алфавитов
 	// может вызвать исключение
-	Alphabet operator+(const Alphabet& a, const Alphabet& b) {
+	Alphabet Alphabet::sum(const Alphabet& a) {
 		Alphabet c = a;
-		for (int i = 0; i < b.n; i++)
+		for (int i = 0; i < this->n; i++)
 		{
-			c += b.abc[i];
+			c.add(this->abc[i]);
 		}
 		return c;
 	}
@@ -192,9 +191,9 @@ namespace ABC_class_a {
 				case 0: {
 					std::cout << "Enter new alphabet" << std::endl;
 					ABC_class_a::Alphabet b;
-					std::cin >> b;
+					input(std::cin, b);
 					try {
-						a = a + b;
+						a = a.sum(b);
 					}
 					catch (const std::exception& exception)
 					{
@@ -208,7 +207,7 @@ namespace ABC_class_a {
 					std::cin.get(c);
 					try
 					{
-						a += c;
+						a.add(c);
 					}
 					catch (const std::exception& exception)
 					{
@@ -222,7 +221,6 @@ namespace ABC_class_a {
 					char* str = getstr(std::cin);
 					int k;
 					getn(k);
-					std::cin.get();
 					char* cipher;
 					try
 					{
@@ -275,7 +273,7 @@ namespace ABC_class_a {
 					break;
 				}
 				case 5: {
-					std::cout << a << std::endl;
+					a.output(std::cout);
 					std::cin.ignore();
 					break;
 				}
@@ -508,7 +506,6 @@ namespace ABC_class_b {
 					char* str = getstr(std::cin);
 					int k;
 					getn(k);
-					std::cin.get();
 					char* cipher;
 					try
 					{

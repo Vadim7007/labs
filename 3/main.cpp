@@ -23,11 +23,28 @@ int main(void) {
 				case 1:
 					int n;
 					getn(n);
-					a = ABC_class_b::Alphabet(n);
+					try
+					{
+						a = ABC_class_b::Alphabet(n);
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						std::cin.ignore();
+						continue;
+					}
 					break;
 				case 2:
 					char* str = getstr(std::cin);
-					a = ABC_class_b::Alphabet(str);
+					try {
+						a = ABC_class_b::Alphabet(str);
+					}
+					catch (const std::exception& exception)
+					{
+						std::cout << exception.what() << std::endl;
+						std::cin.ignore();
+						continue;
+					}
 					delete[] str;
 					break;
 			}

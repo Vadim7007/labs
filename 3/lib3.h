@@ -13,13 +13,13 @@ namespace ABC_class_a {
 		// создает алфавит из элементов строки
 		Alphabet(const char* str);
 		// перегруженный оператор вывода
-		friend std::ostream& operator<<(std::ostream& ostream, const Alphabet& a);
+		std::ostream& output(std::ostream& ostream);
 		// перегруженный оператор ввода
-		friend std::istream& operator>>(std::istream& istream, Alphabet& a);
+		friend std::istream& input(std::istream& istream, Alphabet& a);
 		// перегруженный оператор посимвольного прибавления к алфавиту
-		Alphabet& operator+=(const char& c);							// Зачем, работает и так
+		Alphabet add(const char& c);							
 		// перегруженный оператор сложения двух алфавитов, возвращает новый
-		friend Alphabet operator+(const Alphabet& a, const Alphabet& b);
+		Alphabet sum(const Alphabet& a);
 		// метод для определения, имеется ли смивол в алфавите
 		bool is_char(const char& c) const;
 		// кодирование и декодирование строки на основе шифра цезаря
@@ -56,7 +56,7 @@ namespace ABC_class_b {
 		// перегруженный оператор ввода
 		friend std::istream& operator>>(std::istream& istream, Alphabet& a);
 		// перегруженный оператор посимвольного прибавления к алфавиту
-		Alphabet& operator+=(const char& c);							// Зачем, работает и так
+		Alphabet& operator+=(const char& c);	
 		// перегруженный оператор сложения двух алфавитов, возвращает новый
 		friend Alphabet operator+(const Alphabet& a, const Alphabet& b);
 		// метод для определения, имеется ли смивол в алфавите
