@@ -1,4 +1,6 @@
-﻿#include "lib3.h"
+﻿#ifndef LIB3_H
+#include "lib3.h"
+#endif LIB3_H
 
 namespace ABC_class_a {
 	Alphabet::Alphabet()
@@ -11,7 +13,7 @@ namespace ABC_class_a {
 	{
 		if (k > N)
 		{
-			throw std::exception("Exceeded maximum alphabet size.\n");
+			throw std::invalid_argument("Exceeded maximum alphabet size.\n");
 		}
 		else
 		{
@@ -40,15 +42,14 @@ namespace ABC_class_a {
 				continue;
 			}
 			else {	// если элемент новый
+				if (m >= N) {	// если превышен максимальный размер алфавита
+					throw std::length_error("Exceeded maximum alphabet size.\n");
+				}
 				abc[m] = str[i];
 				m++;
 				n = m;
 			}
-			if (m > N) {	// если превышен максимальный размер алфавита
-				throw std::exception("Exceeded maximum alphabet size.\n");
-			}
 		}
-		n = m;
 	}
 
 	std::ostream& Alphabet:: output(std::ostream& ostream) {
@@ -83,7 +84,7 @@ namespace ABC_class_a {
 	Alphabet Alphabet::add(const char& c) {
 		if (this->n == this->N)
 		{
-			throw std::exception("Exceeded maximum alphabet size.\n");
+			throw std::length_error("Exceeded maximum alphabet size.\n");
 		}
 		if (this->is_char(c)) {
 			return *this;
@@ -295,7 +296,7 @@ namespace ABC_class_b {
 	{
 		if (k > N)
 		{
-			throw std::exception("Exceeded maximum alphabet size.\n");
+			throw std::invalid_argument("Exceeded maximum alphabet size.\n");
 		}
 		else
 		{
@@ -324,15 +325,14 @@ namespace ABC_class_b {
 				continue;
 			}
 			else {	// если элемент новый
+				if (m >= N) {	// если превышен максимальный размер алфавита
+					throw std::length_error("Exceeded maximum alphabet size.\n");
+				}
 				abc[m] = str[i];
 				m++;
 				n = m;
 			}
-			if (m > N) {	// если превышен максимальный размер алфавита
-				throw std::exception("Exceeded maximum alphabet size.\n");
-			}
 		}
-		n = m;
 	}
 
 	std::ostream& operator<<(std::ostream& ostream, const Alphabet& a) {
@@ -354,7 +354,6 @@ namespace ABC_class_b {
 		catch (const std::exception&)
 		{
 			istream.setstate(std::ios_base::failbit);
-			//istream.setstate(std::ios_base::goodbit);
 			delete[] str;
 			return istream;
 		}
@@ -368,7 +367,7 @@ namespace ABC_class_b {
 	Alphabet& Alphabet::operator+=(const char& c) {
 		if (this->n == this->N)
 		{
-			throw std::exception("Exceeded maximum alphabet size.\n");
+			throw std::length_error("Exceeded maximum alphabet size.\n");
 		}
 		if (this->is_char(c)) {
 			return *this;
@@ -382,8 +381,8 @@ namespace ABC_class_b {
 
 	// сложение двух алфавитов
 	// может вызвать исключение
-	Alphabet operator+(const Alphabet& a, const Alphabet& b) {
-		Alphabet c = a;
+	Alphabet Alphabet::operator+(const Alphabet& b) {
+		Alphabet c = *this;
 		for (int i = 0; i < b.n; i++)
 		{
 			c += b.abc[i];

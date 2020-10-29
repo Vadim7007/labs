@@ -1,4 +1,6 @@
-﻿#include "lib3.h"
+﻿#ifndef LIB3_H
+#include "lib3.h"
+#endif LIB3_H
 
 int main(void) {
 	int k = 0;

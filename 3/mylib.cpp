@@ -1,4 +1,6 @@
-﻿#include "mylib.h"
+﻿#ifndef MYLIB_H
+#include "mylib.h"
+#endif MYLIB_H
 
 char* getstr(std::istream& istream) {
 	char* str = nullptr;

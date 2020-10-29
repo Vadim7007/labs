@@ -1,4 +1,6 @@
-﻿#include "mylib.h"
+﻿#ifndef MYLIB_H
+#include "mylib.h"
+#endif MYLIB_H
 
 namespace ABC_class_a {
 	class Alphabet
@@ -58,7 +60,7 @@ namespace ABC_class_b {
 		// перегруженный оператор посимвольного прибавления к алфавиту
 		Alphabet& operator+=(const char& c);	
 		// перегруженный оператор сложения двух алфавитов, возвращает новый
-		friend Alphabet operator+(const Alphabet& a, const Alphabet& b);
+		Alphabet operator+(const Alphabet& b);
 		// метод для определения, имеется ли смивол в алфавите
 		bool is_char(const char& c) const;
 		// кодирование и декодирование строки на основе шифра цезаря
