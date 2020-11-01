@@ -18,6 +18,10 @@ namespace ABC_class_a {
 		else
 		{
 			n = k;
+			if (k<0)
+			{
+				n = 0;
+			}
 			for (int i = 0; i < k; i++)
 			{
 				abc[i] = i + 48;
@@ -301,6 +305,10 @@ namespace ABC_class_b {
 		else
 		{
 			n = k;
+			if (k < 0)
+			{
+				n = 0;
+			}
 			for (int i = 0; i < k; i++)
 			{
 				abc[i] = i + 48;
