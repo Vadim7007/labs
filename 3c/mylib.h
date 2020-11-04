@@ -85,6 +85,7 @@ T* r_alloc(const T* array, const int new_size, int length) {
 	}
 	catch (const std::exception&)
 	{
+		delete[] n_array;
 		n_array = nullptr;
 	}
 

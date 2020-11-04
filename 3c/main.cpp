@@ -2,10 +2,12 @@
 сложение с nullptr
 */
 #ifndef LIB3_H
-#include "lib3.h"
+#include "lib3_2.h"
 #endif LIB3_H
 
 int main(void) {
+	ABC_class_c::Alphabet a("abc"), b;
+	b =	"d" + a;
 	int k = 0;
 	while (k != -1) {
 		// вывод меню и выбор действия
