@@ -2,6 +2,7 @@
 #include <math.h>
 #include <corecrt_math_defines.h>
 #include <stdlib.h>
+#include <utility>
 // ошибки памяти
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
@@ -9,6 +10,8 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
+// работа со временем
+#include <time.h>
 
 // функция ввода числа
 template <class T>
@@ -26,42 +29,6 @@ int getn(T& a) {
 	cin.ignore(1);
 	return 1;
 }
-
-/*
-// функция изменения объема выделенной памяти
-template <class T>
-T* r_alloc(const T* array, const int new_size, int length) {
-	T* n_array;
-	try
-	{
-		n_array = new T[new_size];
-	}
-	catch (const std::exception&)
-	{
-		return nullptr;
-	}
-	if (new_size < length)
-	{
-		length = new_size;
-	}
-
-	for (int i = 0; i < length; i++)
-	{
-		try
-		{
-			n_array[i] = array[i];
-		}
-		catch (const std::exception&)
-		{
-			delete[] n_array;
-			return nullptr;
-		}
-	}
-
-	delete[] array;
-	return n_array;
-}
-*/
 
 // функция изменения объема выделенной памяти
 template <class T>
@@ -95,3 +62,9 @@ T* r_alloc(const T* array, const int new_size, int length) {
 
 // функция ввода строки произвольной длины
 char* getstr(std::istream& istream);
+
+// возвращает случайное число в диапозоне от - N до N - 1 включительно
+int random(const int N) noexcept;
+
+// функция, генерирующая случайную строку длины n
+char* random_str(const int n) noexcept;

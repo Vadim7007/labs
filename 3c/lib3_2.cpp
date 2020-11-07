@@ -1,6 +1,6 @@
-﻿#ifndef LIB3_H
+﻿#ifndef LIB3_2_H
 #include "lib3_2.h"
-#endif LIB3_H
+#endif LIB3_2_H
 
 namespace ABC_class_c {
 	Alphabet::Alphabet() noexcept
@@ -21,7 +21,7 @@ namespace ABC_class_c {
 		abc = new char[k];
 		for (int i = 0; i < k; i++)
 		{
-			abc[i] = i + 48;
+			abc[i] = i%95 + 32;
 		}
 	}
 
@@ -34,7 +34,14 @@ namespace ABC_class_c {
 
 	// может вызвать исключение
 	Alphabet::Alphabet(const char* str) {
-		int k = strlen(str);			// размер строки
+		int k;
+		if (!str)
+		{
+			k = 0;
+		}
+		else {
+			k = strlen(str);		// размер строки
+		}
 		/*
 		есть 2 варианта 
 		1) создавать массив сразу по длине строки
@@ -44,15 +51,7 @@ namespace ABC_class_c {
 		2) перевыделять память каждый раз, когда добавляется элемент
 		- не эффективен по времени выполнения (зависит от k^2)
 		*/
-		try
-		{
-			abc = new char[k];
-		}
-		catch (const std::exception& exception)
-		{
-			throw std::bad_alloc();
-		}
-
+		abc = new char[k];
 		int m = 0;						// текущий размер алфавита
 		for (int i = 0; i < k; i++) {	// для каждого символа из строки
 
@@ -150,6 +149,7 @@ namespace ABC_class_c {
 		this->n = c.n;
 		try
 		{
+			delete[](this->abc);
 			this->abc = new char[n];
 		}
 		catch (const std::exception&)
@@ -162,6 +162,7 @@ namespace ABC_class_c {
 
 	Alphabet& Alphabet::operator=(Alphabet&& c) noexcept {
 		this->n = c.n;
+		delete[](this->abc);
 		this->abc = c.abc;
 		c.n = 0;
 		c.abc = nullptr;
@@ -226,11 +227,15 @@ namespace ABC_class_c {
 				cipher_text[i] = this->abc[(j + offset) % this->n];
 			}
 			else {
-				cipher_text[i] = this->abc[(j - offset + offset * this->n) % this->n];
+				cipher_text[i] = this->abc[(j - offset + abs(offset) * this->n) % this->n];
 			}
 		}
 		cipher_text[size] = '\0';
 		return 0;
+	}
+
+	int Alphabet::get_len() const noexcept {
+		return this->n;
 	}
 
 	void Dialog(ABC_class_c::Alphabet& a) noexcept {

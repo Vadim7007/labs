@@ -41,6 +41,8 @@ namespace ABC_class_c {
 		// для cipher_text память должна быть выделена заранее
 		int coding(const char* plain_text, int size,
 			int offset, const bool mode, char* cipher_text) const noexcept;
+		// возвращает текущую длину алфавита
+		int get_len() const noexcept;
 
 	private:
 		// возвращает номер символа в алфавите
