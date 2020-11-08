@@ -318,6 +318,33 @@ TEST_F(AlphabetTest, Test_coding_2) {
 	}
 }
 
+TEST_F(AlphabetTest, Test_coding_3) {
+	Alphabet a(100);
+	char* str = random_str(10);
+	char* cipher = new char[10];
+	ASSERT_EQ(a.coding(str, 11, -1, 1, cipher), -1);
+}
+
+TEST_F(AlphabetTest, Test_coding_4) {
+	char* str = random_str(10);
+	char* cipher = new char[10];
+	ASSERT_EQ(y.coding(str, 9, -1, 1, cipher), -1);
+}
+
+TEST_F(AlphabetTest, Test_coding_5) {
+	Alphabet a;
+	char* str = random_str(10);
+	char* cipher = new char[10];
+	ASSERT_EQ(a.coding(str, 10, -1, 1, cipher), -1);
+}
+
+TEST_F(AlphabetTest, Test_coding_6) {
+	Alphabet a;
+	char* str = random_str(10);
+	char* cipher = new char[9];
+	ASSERT_EQ(a.coding(str, 10, -1, 1, cipher), -1);
+}
+
 int main(int argc, char* argv[]) {
 	::testing::FLAGS_gtest_shuffle = 1;
 	::testing::InitGoogleTest(&argc, argv);
