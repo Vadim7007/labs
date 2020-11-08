@@ -17,6 +17,8 @@ namespace ABC_class_c {
 		{
 			std::cout << "Warning. n will be zero." << std::endl;
 			n = 0;
+			this->abc = nullptr;
+			return;
 		}
 		abc = new char[k];
 		for (int i = 0; i < k; i++)
@@ -34,10 +36,12 @@ namespace ABC_class_c {
 
 	// может вызвать исключение
 	Alphabet::Alphabet(const char* str) {
-		int k;
+		int k = 0;
 		if (!str)
 		{
-			k = 0;
+			this->n = 0;
+			this->abc = nullptr;
+			return;
 		}
 		else {
 			k = strlen(str);		// размер строки
@@ -122,9 +126,9 @@ namespace ABC_class_c {
 	// добавление символа в алфавит
 	// может вызвать исключение
 	Alphabet& operator+=(Alphabet& a, const char& c) {
-		if (a.is_char(c)) {
+		if (!a.is_char(c)) {
 			a.abc = r_alloc(a.abc, (a.n+1), a.n);
-			if (a.abc) {
+			if (!a.abc) {
 				throw std::bad_alloc();
 			}
 			a.abc[a.n] = c;

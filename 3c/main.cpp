@@ -1,6 +1,4 @@
-﻿// возможная ошибка с перемещением
-
-#ifndef LIB3_2_H
+﻿#ifndef LIB3_2_H
 #include "lib3_2.h"
 #endif LIB3_2_H
 

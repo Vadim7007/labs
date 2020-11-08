@@ -69,7 +69,8 @@ protected:
 };
 
 TEST_F(AlphabetTest, Test_constructor_1) {
-	ASSERT_EQ(y.get_len(), 0);
+	Alphabet a;
+	ASSERT_EQ(a.get_len(), 0);
 }
 
 TEST_F(AlphabetTest, Test_constructor_2) {
@@ -248,8 +249,8 @@ TEST_F(AlphabetTest, Test_operator_7) {
 TEST_F(AlphabetTest, Test_operator_8) {
 	Alphabet a("abcde");
 	a+='a';
-	ASSERT_EQ(y.get_len(), 5);
-	ASSERT_TRUE(y.is_char('c'));
+	ASSERT_EQ(a.get_len(), 5);
+	ASSERT_TRUE(a.is_char('c'));
 }
 
 TEST_F(AlphabetTest, Test_operator_9) {
@@ -263,7 +264,7 @@ TEST_F(AlphabetTest, Test_operator_10) {
 	Alphabet a;
 	a += 'd';
 	ASSERT_EQ(a.get_len(), 1);
-	ASSERT_TRUE(y.is_char('d'));
+	ASSERT_TRUE(a.is_char('d'));
 }
 
 TEST_F(AlphabetTest, Test_operator_11) {
