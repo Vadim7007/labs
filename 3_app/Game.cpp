@@ -1,22 +1,22 @@
-#include "Source.h"
+п»ї#include "Source.h"
 #ifndef  IOSTREAM_H
 #include <stdio.h>
 #include <iostream>
 #endif
 
 int menu(const HANDLE console) noexcept {
-	int k = 0;	// номер выделенной строки
+	int k = 0;	// РЅРѕРјРµСЂ РІС‹РґРµР»РµРЅРЅРѕР№ СЃС‚СЂРѕРєРё
 	const int N = 5;
 	std::string m[N] = {"Start game", "Options", "Results", "About", "Exit"};
 	int input;
 	do
 	{
-		// оформление фона
+		// РѕС„РѕСЂРјР»РµРЅРёРµ С„РѕРЅР°
 		system("cls");
 		SetConsoleTextAttribute(console, BACKGROUND_BLUE |
 			BACKGROUND_GREEN | BACKGROUND_RED);
 
-		// вывод меню с одной выделенной строкой
+		// РІС‹РІРѕРґ РјРµРЅСЋ СЃ РѕРґРЅРѕР№ РІС‹РґРµР»РµРЅРЅРѕР№ СЃС‚СЂРѕРєРѕР№
 		SetConsoleTextAttribute(console, BACKGROUND_BLUE |
 			BACKGROUND_GREEN | BACKGROUND_RED);
 		for (int i = 0; i < k; i++)
@@ -33,7 +33,7 @@ int menu(const HANDLE console) noexcept {
 			std::cout << std::setw(30) << m[i] << std::endl;
 		}
 
-		// захват нажатия кнопки клавиатуры
+		// Р·Р°С…РІР°С‚ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё РєР»Р°РІРёР°С‚СѓСЂС‹
 		input = _getch();
 		if (input == 72) {
 			k--;
@@ -77,7 +77,7 @@ int action(const int k) noexcept {
 }
 
 struct parametrs Start_game() noexcept {
-	// оформление дизайна
+	// РѕС„РѕСЂРјР»РµРЅРёРµ РґРёР·Р°Р№РЅР°
 	system("cls");
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED);
@@ -90,7 +90,7 @@ struct parametrs Start_game() noexcept {
 	std::cout << std::setw(20);
 
 	struct parametrs p;
-	// вывод меню и выбор дейсвтия
+	// РІС‹РІРѕРґ РјРµРЅСЋ Рё РІС‹Р±РѕСЂ РґРµР№СЃРІС‚РёСЏ
 	int k;
 	int st;
 	do {
@@ -103,7 +103,7 @@ struct parametrs Start_game() noexcept {
 		return p;
 	}
 
-	// ввод параметров игры
+	// РІРІРѕРґ РїР°СЂР°РјРµС‚СЂРѕРІ РёРіСЂС‹
 	system("cls");
 	std::cout << "Enter your name." << std::endl;
 	std::cin >> p.name;

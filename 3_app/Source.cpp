@@ -1,4 +1,4 @@
-#include "Source.h"
+п»ї#include "Source.h"
 
 int mini_menu(player& person, const int digital, 
 	const struct parametrs& p, bool* balls) {
@@ -44,16 +44,16 @@ int mini_menu(player& person, const int digital,
 		}
 	} while (action!= 4);
 
-	//  действия, не связанные с выбором игрока (проверки)
-	for (int j = 0; j < p.maps; j++)	// для каждой карты
+	//  РґРµР№СЃС‚РІРёСЏ, РЅРµ СЃРІСЏР·Р°РЅРЅС‹Рµ СЃ РІС‹Р±РѕСЂРѕРј РёРіСЂРѕРєР° (РїСЂРѕРІРµСЂРєРё)
+	for (int j = 0; j < p.maps; j++)	// РґР»СЏ РєР°Р¶РґРѕР№ РєР°СЂС‚С‹
 	{
-		if (!person.card[j].fil) {	// если карта ещё не заполнена
-			// если вся линия заполнена
+		if (!person.card[j].fil) {	// РµСЃР»Рё РєР°СЂС‚Р° РµС‰С‘ РЅРµ Р·Р°РїРѕР»РЅРµРЅР°
+			// РµСЃР»Рё РІСЃСЏ Р»РёРЅРёСЏ Р·Р°РїРѕР»РЅРµРЅР°
 			if (person.card[j].MapState() == Prog3::BUSY) {
 				person.shout();
 				person.card[j]--;
 			}
-			// если пустых ячеек не осталось
+			// РµСЃР»Рё РїСѓСЃС‚С‹С… СЏС‡РµРµРє РЅРµ РѕСЃС‚Р°Р»РѕСЃСЊ
 			auto mtx = person.card[j].FreeCells();
 			int comm = -1;
 			if (mtx[comm + 1].type == Prog3::EMPTY) {
@@ -63,7 +63,7 @@ int mini_menu(player& person, const int digital,
 		}
 	}
 
-	// если у игрока не осталось пустых карт
+	// РµСЃР»Рё Сѓ РёРіСЂРѕРєР° РЅРµ РѕСЃС‚Р°Р»РѕСЃСЊ РїСѓСЃС‚С‹С… РєР°СЂС‚
 	if (person.fil == p.maps)
 	{
 		HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -80,7 +80,7 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 	do
 	{
 		system("cls");
-		//  выпадание мяча
+		//  РІС‹РїР°РґР°РЅРёРµ РјСЏС‡Р°
 		int digital;
 		do {
 			digital = random(45) + 46;
@@ -91,23 +91,23 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 			<< " dropped." << std::endl;
 		balls[digital] = 1;
 
-		// просмотр всех карт у ботов
-		for (int i = 0; i < p.count; i++)	// для каждого игрока
+		// РїСЂРѕСЃРјРѕС‚СЂ РІСЃРµС… РєР°СЂС‚ Сѓ Р±РѕС‚РѕРІ
+		for (int i = 0; i < p.count; i++)	// РґР»СЏ РєР°Р¶РґРѕРіРѕ РёРіСЂРѕРєР°
 		{
 			SetConsoleTextAttribute(console, BACKGROUND_RED 
 						| BACKGROUND_GREEN | BACKGROUND_BLUE);
 			std::cout << std::setw(20) << ai[i].name << " plays...\n";
 			Sleep(300);
-			for (int j = 0; j < p.maps; j++)	// для каждой карты
+			for (int j = 0; j < p.maps; j++)	// РґР»СЏ РєР°Р¶РґРѕР№ РєР°СЂС‚С‹
 			{
-				if (!ai[i].card[j].fil) {	// если карта ещё не заполнена
-					ai[i].card[j](digital);	// установить состоянение ячейки с этим номером
-					// если вся линия заполнена
+				if (!ai[i].card[j].fil) {	// РµСЃР»Рё РєР°СЂС‚Р° РµС‰С‘ РЅРµ Р·Р°РїРѕР»РЅРµРЅР°
+					ai[i].card[j](digital);	// СѓСЃС‚Р°РЅРѕРІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРµРЅРёРµ СЏС‡РµР№РєРё СЃ СЌС‚РёРј РЅРѕРјРµСЂРѕРј
+					// РµСЃР»Рё РІСЃСЏ Р»РёРЅРёСЏ Р·Р°РїРѕР»РЅРµРЅР°
 					if (ai[i].card[j].MapState() == Prog3::BUSY) {
 						ai[i].shout();
 						ai[i].card[j]--;
 					}
-					// если пустых ячеек не осталось
+					// РµСЃР»Рё РїСѓСЃС‚С‹С… СЏС‡РµРµРє РЅРµ РѕСЃС‚Р°Р»РѕСЃСЊ
 					auto mtx = ai[i].card[j].FreeCells();
 					int comm = -1;
 					if (mtx[comm + 1].type == Prog3::EMPTY) {
@@ -117,7 +117,7 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 				}
 			}
 
-			// если у бота не осталось пустых карт
+			// РµСЃР»Рё Сѓ Р±РѕС‚Р° РЅРµ РѕСЃС‚Р°Р»РѕСЃСЊ РїСѓСЃС‚С‹С… РєР°СЂС‚
 			if (ai[i].fil == p.maps)
 			{
 				win = 1;
@@ -127,24 +127,25 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 			}
 		}
 
-		// меню для игрока
+		// РјРµРЅСЋ РґР»СЏ РёРіСЂРѕРєР°
 		if (!win) {
 			win = mini_menu(person, digital, p, balls);
 		}
 
 	} while (!win);
+	std::cin.ignore();
 }
 
 void download_game(const struct parametrs& p){
-	// выход, если была соответсвующая команда
+	// РІС‹С…РѕРґ, РµСЃР»Рё Р±С‹Р»Р° СЃРѕРѕС‚РІРµС‚СЃРІСѓСЋС‰Р°СЏ РєРѕРјР°РЅРґР°
 	if (p.exit == 1) {
 		return;
 	}
 
-	// начало
+	// РЅР°С‡Р°Р»Рѕ
 	std::cout << std::setw(30) << "Download..." << std::endl;
 
-	// создание игроков
+	// СЃРѕР·РґР°РЅРёРµ РёРіСЂРѕРєРѕРІ
 	player* ai;
 	try {
 		ai = new player[p.count];
@@ -158,18 +159,18 @@ void download_game(const struct parametrs& p){
 		ai[i] = player(p.maps, p.lines, i);
 	}
 
-	// создание игрока
+	// СЃРѕР·РґР°РЅРёРµ РёРіСЂРѕРєР°
 	player person(p.maps, p.lines, 0);
 	person.name = p.name;
 
-	// массив шаров, которые выпали
+	// РјР°СЃСЃРёРІ С€Р°СЂРѕРІ, РєРѕС‚РѕСЂС‹Рµ РІС‹РїР°Р»Рё
 	bool balls[Prog3::MaxNumber];
 	for (int i = 0; i < Prog3::MaxNumber; i++)
 	{
 		balls[i] = FALSE;
 	}
 
-	// игра
+	// РёРіСЂР°
 	system("cls");
 	game(ai, p, person, balls);
 

@@ -1,9 +1,9 @@
-#ifndef Loto_h
+п»ї#ifndef Loto_h
 #define Loto_h
 namespace Prog3 {
-	const int SZline = 9; //максимальная длина строки
-	const int NumNum = 5; //количество непустых ячеек в строке
-	const int MaxNumber = 90; //максимально возможное значение ячейки
+	const int SZline = 9; //РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° СЃС‚СЂРѕРєРё
+	const int NumNum = 5; //РєРѕР»РёС‡РµСЃС‚РІРѕ РЅРµРїСѓСЃС‚С‹С… СЏС‡РµРµРє РІ СЃС‚СЂРѕРєРµ
+	const int MaxNumber = 90; //РјР°РєСЃРёРјР°Р»СЊРЅРѕ РІРѕР·РјРѕР¶РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ СЏС‡РµР№РєРё
 	enum Fullness {
 		EMPTY,
 		BUSY,

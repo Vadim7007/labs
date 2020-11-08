@@ -1,4 +1,4 @@
-#include <exception>
+ï»¿#include <exception>
 #include <ostream>
 #include <istream>
 #include "Map.h"
@@ -42,14 +42,14 @@ namespace Prog3 {
 				for (int j = 0; j < NumNum; j++) {
 					do {
 						again = -1;
-						count1 = rand() % (SZline); //âûáîð ÿ÷åéêè â ñòðîêå
+						count1 = rand() % (SZline); //Ð²Ñ‹Ð±Ð¾Ñ€ ÑÑ‡ÐµÐ¹ÐºÐ¸ Ð² ÑÑ‚Ñ€Ð¾ÐºÐµ
 						if (lines[Lnumber].columns[count1].type == Prog3::EMPTY) {
 							lines[Lnumber].columns[count1].type = Prog3::FREE;
-							count2 = 1 + rand() % (MaxNumber);//âûáîð çíà÷åíèÿ ÿ÷åéêè
+							count2 = 1 + rand() % (MaxNumber);//Ð²Ñ‹Ð±Ð¾Ñ€ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ ÑÑ‡ÐµÐ¹ÐºÐ¸
 							lines[Lnumber].columns[count1].number = count2;
 							again = 0;
 						}
-					} while (again == -1); //ïîêà count1 íå âûäàñò ïóñòóþ ÿ÷åéêó 
+					} while (again == -1); //Ð¿Ð¾ÐºÐ° count1 Ð½Ðµ Ð²Ñ‹Ð´Ð°ÑÑ‚ Ð¿ÑƒÑÑ‚ÑƒÑŽ ÑÑ‡ÐµÐ¹ÐºÑƒ 
 				}
 			}
 		}
@@ -85,9 +85,9 @@ namespace Prog3 {
 		return *this;
 	}
 	int Map::HelpfulFunction(int barrel, int occupy) {
-		int Cnumber, FBcount, count = 0; //count ñ÷èòàåò, ñêîëüêî ÿ÷ååê ñîîòâåòñòâóåò
+		int Cnumber, FBcount, count = 0; //count ÑÑ‡Ð¸Ñ‚Ð°ÐµÑ‚, ÑÐºÐ¾Ð»ÑŒÐºÐ¾ ÑÑ‡ÐµÐµÐº ÑÐ¾Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð²ÑƒÐµÑ‚
 		for (int Lnumber = 0; Lnumber < UL; Lnumber++) {
-			FBcount = 0; //ñ÷¸ò÷èê íåïóñòûõ ÿ÷ååê â ñòðîêå (free/busy)
+			FBcount = 0; //ÑÑ‡Ñ‘Ñ‚Ñ‡Ð¸Ðº Ð½ÐµÐ¿ÑƒÑÑ‚Ñ‹Ñ… ÑÑ‡ÐµÐµÐº Ð² ÑÑ‚Ñ€Ð¾ÐºÐµ (free/busy)
 			Cnumber = 0;
 			while (Cnumber < SZline && FBcount < NumNum) {
 				if (lines[Lnumber].columns[Cnumber].type != EMPTY && lines[Lnumber].columns[Cnumber].number == barrel) {
@@ -118,7 +118,7 @@ namespace Prog3 {
 		return number;
 	}
 	Fullness Map::MapState() const {
-		Fullness exist = FREE; //îòâå÷àåò çà ñîñòîÿíèå êàðòû
+		Fullness exist = FREE; //Ð¾Ñ‚Ð²ÐµÑ‡Ð°ÐµÑ‚ Ð·Ð° ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ ÐºÐ°Ñ€Ñ‚Ñ‹
 		int number = FindBusyCells(0);
 		if (number != 0)
 			exist = BUSY;
@@ -126,7 +126,7 @@ namespace Prog3 {
 	}
 	struct Cell* Map::FreeCells() const {
 		struct Cell* mtx = new struct Cell[NumNum * UL];
-		int i, count = 0, Cnumber, FBcount; //count - òåêóùèé ðàçìåð ìàññèâà ñâîáîäíûõ ÿ÷ååê
+		int i, count = 0, Cnumber, FBcount; //count - Ñ‚ÐµÐºÑƒÑ‰Ð¸Ð¹ Ñ€Ð°Ð·Ð¼ÐµÑ€ Ð¼Ð°ÑÑÐ¸Ð²Ð° ÑÐ²Ð¾Ð±Ð¾Ð´Ð½Ñ‹Ñ… ÑÑ‡ÐµÐµÐº
 		for (int Lnumber = 0; Lnumber < UL; Lnumber++) {
 			FBcount = 0;
 			Cnumber = 0;
@@ -151,7 +151,7 @@ namespace Prog3 {
 			}
 		}
 		if (count == 0)
-			mtx[count].type = EMPTY; //äëÿ ñëó÷àÿ, êîãäà ìàññèâ ïóñò
+			mtx[count].type = EMPTY; //Ð´Ð»Ñ ÑÐ»ÑƒÑ‡Ð°Ñ, ÐºÐ¾Ð³Ð´Ð° Ð¼Ð°ÑÑÐ¸Ð² Ð¿ÑƒÑÑ‚
 		else
 			mtx[count - 1].type = BUSY;
 		return mtx;
