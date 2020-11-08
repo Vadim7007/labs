@@ -208,13 +208,9 @@ namespace ABC_class_c {
 			std::cout << "Invalid size of text" << std::endl;
 			return -1;
 		}
-		try
+		if(!cipher_text)
 		{
-			cipher_text[size];
-		}
-		catch (const std::exception& exception)
-		{
-			std::cout << exception.what() << std::endl;
+			std::cout << "Write access error" << std::endl;
 			return -1;
 		}
 

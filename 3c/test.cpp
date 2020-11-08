@@ -339,9 +339,9 @@ TEST_F(AlphabetTest, Test_coding_5) {
 }
 
 TEST_F(AlphabetTest, Test_coding_6) {
-	Alphabet a;
+	Alphabet a(100);
 	char* str = random_str(10);
-	char* cipher = new char[9];
+	char* cipher = nullptr;
 	ASSERT_EQ(a.coding(str, 10, -1, 1, cipher), -1);
 }
 
