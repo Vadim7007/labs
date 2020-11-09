@@ -46,7 +46,6 @@ char* random_str(const int n) noexcept {
 
 using namespace ABC_class_c;
 #define N 10
-Alphabet y;
 
 
 class AlphabetTest : public ::testing::Test
@@ -199,8 +198,9 @@ TEST_F(AlphabetTest, Test_constructor_18) {
 
 TEST_F(AlphabetTest, Test_operator_1) {
 	Alphabet a("abcde");
+	Alphabet y;
 	y = y + a;
-	ASSERT_TRUE(y.get_len() >= 5);
+	ASSERT_TRUE(y.get_len() == 5);
 	ASSERT_TRUE(y.is_char('c'));
 }
 
@@ -213,18 +213,21 @@ TEST_F(AlphabetTest, Test_operator_2) {
 }
 
 TEST_F(AlphabetTest, Test_operator_3) {
+	Alphabet y;
 	y = y + 'a';
-	ASSERT_TRUE(y.get_len() > 0);
+	ASSERT_TRUE(y.get_len() == 1);
 	ASSERT_TRUE(y.is_char('a'));
 }
 
 TEST_F(AlphabetTest, Test_operator_4) {
+	Alphabet y(3);
 	ASSERT_NO_THROW(y = y + Alphabet());
 }
 
 TEST_F(AlphabetTest, Test_operator_5) {
+	Alphabet y;
 	y = y + 5;
-	ASSERT_TRUE(y.get_len() > 4);
+	ASSERT_TRUE(y.get_len() == 5);
 	ASSERT_TRUE(y.is_char(' '));
 }
 
@@ -326,6 +329,7 @@ TEST_F(AlphabetTest, Test_coding_3) {
 }
 
 TEST_F(AlphabetTest, Test_coding_4) {
+	Alphabet y(100);
 	char* str = random_str(10);
 	char* cipher = new char[10];
 	ASSERT_EQ(y.coding(str, 9, -1, 1, cipher), -1);
