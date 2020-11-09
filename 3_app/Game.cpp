@@ -105,22 +105,22 @@ struct parametrs Start_game() noexcept {
 
 	// ввод параметров игры
 	system("cls");
-	std::cout << "Enter your name." << std::endl;
+	std::cout << "\tEnter your name." << std::endl;
 	std::cin >> p.name;
 	int m = 0;
-	std::cout << "Enter count of players (AI). No more than 16." << std::endl;
+	std::cout << "\tEnter count of players (AI). No more than 16." << std::endl;
 	while (m < 1 || m > 16) {
 		getn(m);
 	}
 	p.count = m;
 	m = 0;
-	std::cout << "How many maps will have players. One or three." << std::endl;
+	std::cout << "\tHow many maps will have players. One or three." << std::endl;
 	while (m != 1 && m != 3) {
 		getn(m);
 	}
 	p.maps = m;
 	m = 0;
-	std::cout << "Enter count of lines. From 1 to 9." << std::endl;
+	std::cout << "\tEnter count of lines. From 1 to 9." << std::endl;
 	while (m < 1 || m > 9) {
 		getn(m);
 	}

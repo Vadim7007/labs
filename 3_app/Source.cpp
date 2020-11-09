@@ -5,12 +5,14 @@ int mini_menu(player& person, const int digital,
 	int action;
 	do {
 		system("cls");
-		std::cout << std::setw(20) << "1 - View my cards." << std::endl;
-		std::cout << std::setw(20) << "2 - View all balls." << std::endl;
-		std::cout << std::setw(20) << "3 - Put barrell." << std::endl;
-		std::cout << std::setw(20) << "4 - Continue" << std::endl;
-		action = 0;
-		while (action < 1 || action > 4) {
+		std::cout << std::endl;
+		std::cout << "\t1 - View my cards." << std::endl;
+		std::cout << "\t2 - View all balls." << std::endl;
+		std::cout << "\t3 - Put barrell." << std::endl;
+		std::cout << "\t4 - Continue." << std::endl;
+		std::cout << "\t0 - Exit." << std::endl;
+		action = -1;
+		while (action < 0 || action > 4) {
 			getn(action);
 		}
 		switch (action)
@@ -27,7 +29,7 @@ int mini_menu(player& person, const int digital,
 			{
 				if (balls[i])
 				{
-					std::cout << std::setw(20) << i << " ";
+					std::cout << '\t' << i;
 				}
 			}
 			std::cout << std::endl;
@@ -39,10 +41,12 @@ int mini_menu(player& person, const int digital,
 				person.card[i](digital);
 			}
 			break;
+		case 0:
+			return 1;
 		default:
 			break;
 		}
-	} while (action!= 4);
+	} while (action!= 4 );
 
 	//  действия, не связанные с выбором игрока (проверки)
 	for (int j = 0; j < p.maps; j++)	// для каждой карты
@@ -58,8 +62,8 @@ int mini_menu(player& person, const int digital,
 			int comm = -1;
 			if (mtx[comm + 1].type == Prog3::EMPTY) {
 				person.card[j].fil = 1;
+				person.fil++;
 			}
-			person.fil++;
 		}
 	}
 
@@ -89,7 +93,7 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 									   | BACKGROUND_INTENSITY);
 		std::cout << std::setw(20) << "Ball number " << digital 
 			<< " dropped." << std::endl;
-		balls[digital] = 1;
+		balls[digital-1] = 1;
 
 		// просмотр всех карт у ботов
 		for (int i = 0; i < p.count; i++)	// для каждого игрока
@@ -97,7 +101,7 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 			SetConsoleTextAttribute(console, BACKGROUND_RED 
 						| BACKGROUND_GREEN | BACKGROUND_BLUE);
 			std::cout << std::setw(20) << ai[i].name << " plays...\n";
-			Sleep(300);
+			Sleep(250);
 			for (int j = 0; j < p.maps; j++)	// для каждой карты
 			{
 				if (!ai[i].card[j].fil) {	// если карта ещё не заполнена
@@ -112,8 +116,8 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 					int comm = -1;
 					if (mtx[comm + 1].type == Prog3::EMPTY) {
 						ai[i].card[j].fil = 1;
+						ai[i].fil++;
 					}
-					ai[i].fil++;
 				}
 			}
 
@@ -122,7 +126,7 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 			{
 				win = 1;
 				SetConsoleTextAttribute(console, BACKGROUND_RED | BACKGROUND_INTENSITY);
-				std::cout << std::setw(20) << ai[i].name << "win!" << std::endl;
+				std::cout << std::setw(20) << ai[i].name << " win!" << std::endl;
 				break;
 			}
 		}
