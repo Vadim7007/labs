@@ -18,7 +18,8 @@ public:
 	player();
 	player(int maps_count, int lines_count, int index);
 	~player();
-	void shout();		// метод, который говорит "квартира"
+	void shout(HANDLE& console) const noexcept;		// метод, который говорит "квартира"
+	player& operator = (player&& a) noexcept;
 	Prog3::Map* card;	// массив карт
 	int fil = 0;		// количесвто заполненный карт
 	std::string name;	// имя игрока

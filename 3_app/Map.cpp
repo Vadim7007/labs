@@ -33,8 +33,8 @@ namespace Prog3 {
 		if (NL < 0)
 			throw std::invalid_argument("Invalid quantity of lines");
 		else {
-			int count1, count2, again;
-			srand(time(NULL));
+			int count1 = 0, count2 = 0, again;
+			//srand(time(NULL));
 			UL = NL;
 			lines = new struct Line[UL];
 			EmptySetter();
@@ -42,10 +42,10 @@ namespace Prog3 {
 				for (int j = 0; j < NumNum; j++) {
 					do {
 						again = -1;
-						count1 = rand() % (SZline); //выбор ячейки в строке
+						count1 = (rand()+clock() + j + count1) % (SZline); //выбор ячейки в строке
 						if (lines[Lnumber].columns[count1].type == Prog3::EMPTY) {
 							lines[Lnumber].columns[count1].type = Prog3::FREE;
-							count2 = 1 + rand() % (MaxNumber);//выбор значения ячейки
+							count2 = 1 + (rand()+clock() + count1 + count2) % (MaxNumber);//выбор значения ячейки
 							lines[Lnumber].columns[count1].number = count2;
 							again = 0;
 						}
@@ -158,7 +158,7 @@ namespace Prog3 {
 	}
 	std::ostream& operator << (std::ostream& c, const Map& a) {
 		if (a.UL <= 0)
-			c << "Map is empty";
+			c << "Map is empty" << std::endl;
 		else
 			for (int Lnumber = 0; Lnumber < a.UL; Lnumber++) {
 				for (int Cnumber = 0; Cnumber < SZline; Cnumber++) {
@@ -184,13 +184,19 @@ namespace Prog3 {
 					c.setstate(std::ios::failbit);
 			return c;
 		}*/
-	int operator >> (std::istream& c, Map& a) {
-		int barrel;
-		c >> barrel;
-		if (!c.good() || barrel < 1 || barrel > MaxNumber) {
-			throw std::invalid_argument("Invalid value");
+	void operator >> (std::istream& c, Map& a) {
+		int barrel = 1;
+		while (!c.eof() && barrel != 0) {
+			c >> barrel;
+			if (!c.good() || barrel < 1 || barrel > MaxNumber) {
+				c.clear();
+				while (c.get() != '\n');
+				barrel = 0;
+			}
+			else {
+				a(barrel);
+			}
 		}
-		return barrel;
 	}
 	Fullness Map::operator () (int Lnumber, int Cnumber) const {
 		if (Lnumber < 0 || Lnumber >= UL || Cnumber < 0 || Cnumber >= SZline) {
@@ -210,7 +216,7 @@ namespace Prog3 {
 			struct Line* newlines = new struct Line[UL - number];
 			while (Ncopy < UL) {
 				if (lines[Ncopy].BusyCells != 5) {
-					for (Cnumber = 0; Cnumber < MaxNumber; Cnumber++) {
+					for (Cnumber = 0; Cnumber < SZline; Cnumber++) {
 						newlines[Ncur].columns[Cnumber].number = lines[Ncopy].columns[Cnumber].number;
 						newlines[Ncur].columns[Cnumber].type = lines[Ncopy].columns[Cnumber].type;
 					}

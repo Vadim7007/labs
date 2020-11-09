@@ -34,7 +34,7 @@ namespace Prog3 {
 		Fullness MapState() const;
 		struct Cell* FreeCells() const;
 		friend std::ostream& operator << (std::ostream& c, const Map& a);
-		friend int operator >> (std::istream& c, Map& a);
+		friend void operator >> (std::istream& c, Map& a);
 		Fullness operator () (int Lnumber, int Cnumber) const;
 		void operator () (int barrel);
 		const Map operator -- (int);

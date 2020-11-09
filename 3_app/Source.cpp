@@ -1,7 +1,7 @@
 ﻿#include "Source.h"
 
 int mini_menu(player& person, const int digital, 
-	const struct parametrs& p, bool* balls) {
+	const struct parametrs& p, bool* balls, HANDLE console) {
 	int action;
 	do {
 		system("cls");
@@ -29,7 +29,7 @@ int mini_menu(player& person, const int digital,
 			{
 				if (balls[i])
 				{
-					std::cout << '\t' << i;
+					std::cout << '\t' << (i+1);
 				}
 			}
 			std::cout << std::endl;
@@ -54,7 +54,7 @@ int mini_menu(player& person, const int digital,
 		if (!person.card[j].fil) {	// если карта ещё не заполнена
 			// если вся линия заполнена
 			if (person.card[j].MapState() == Prog3::BUSY) {
-				person.shout();
+				person.shout(console);
 				person.card[j]--;
 			}
 			// если пустых ячеек не осталось
@@ -102,14 +102,17 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 						| BACKGROUND_GREEN | BACKGROUND_BLUE);
 			std::cout << std::setw(20) << ai[i].name << " plays...\n";
 			Sleep(250);
+
 			for (int j = 0; j < p.maps; j++)	// для каждой карты
 			{
 				if (!ai[i].card[j].fil) {	// если карта ещё не заполнена
 					ai[i].card[j](digital);	// установить состоянение ячейки с этим номером
 					// если вся линия заполнена
 					if (ai[i].card[j].MapState() == Prog3::BUSY) {
-						ai[i].shout();
+						ai[i].shout(console);
 						ai[i].card[j]--;
+						SetConsoleTextAttribute(console, BACKGROUND_RED
+							| BACKGROUND_GREEN | BACKGROUND_BLUE);
 					}
 					// если пустых ячеек не осталось
 					auto mtx = ai[i].card[j].FreeCells();
@@ -120,22 +123,22 @@ void game(player* ai, const struct parametrs& p, player& person, bool* balls){
 					}
 				}
 			}
-
 			// если у бота не осталось пустых карт
 			if (ai[i].fil == p.maps)
 			{
 				win = 1;
 				SetConsoleTextAttribute(console, BACKGROUND_RED | BACKGROUND_INTENSITY);
 				std::cout << std::setw(20) << ai[i].name << " win!" << std::endl;
+				SetConsoleTextAttribute(console, BACKGROUND_RED
+					| BACKGROUND_GREEN | BACKGROUND_BLUE);
 				break;
 			}
 		}
 
 		// меню для игрока
 		if (!win) {
-			win = mini_menu(person, digital, p, balls);
+			win = mini_menu(person, digital, p, balls, console);
 		}
-
 	} while (!win);
 	std::cin.ignore();
 }
@@ -177,7 +180,6 @@ void download_game(const struct parametrs& p){
 	// игра
 	system("cls");
 	game(ai, p, person, balls);
-
 	return;
 }
 
@@ -205,8 +207,19 @@ player::~player()
 	delete[]card;
 }
 
-void player::shout() {
-
+void player::shout(HANDLE& console) const noexcept {
+	SetConsoleTextAttribute(console, BACKGROUND_RED | BACKGROUND_INTENSITY);
 	std::cout << std::setw(20) << name << ": Kvartira!" << std::endl;
+	std::cin.ignore();
 	return;
+}
+
+player& player::operator = (player&& a) noexcept{
+	this->card = a.card;
+	a.card = nullptr;
+	this->fil = a.fil;
+	this->lines = a.lines;
+	this->maps = a.maps;
+	this->name = a.name;
+	return *this;
 }
