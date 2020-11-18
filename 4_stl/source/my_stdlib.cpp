@@ -1,5 +1,5 @@
-//#include "my_stdlib.h"
-#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/my_stdlib.h"
+п»ї//#include "my_stdlib.h"
+#include "/Users/vadim/Desktop/РЇ/РџСЂРѕРіСЂР°РјРјРёСЂРѕРІР°РЅРёРµ/study/Lab4/include/my_stdlib.h"
 
 char* getstr(std::istream& istream) {
 	char* str = nullptr;

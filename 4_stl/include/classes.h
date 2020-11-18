@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "my_stdlib.h"
 
@@ -22,55 +22,61 @@ enum weapons {
 };
 
 enum states {
-	free,
+	free_st,
 	busy,
 	ground
 };
 
-enum modificated_parametrs {	// параметры, которые могут быть модифицированы
-	// для объектво 0 - 5
-	HP,				// живучесть
-	speed,			// скорость
-	range,			// дальность хода объекта
-	storage,		// максимальный размер склада корабля
-	max_weapon,		// максимальное количество оружия
-	max_aircraft,	// максимальное количество самолетов на корабле
-	// для вооружения 6 - 9
-	radius,			// радиус действия определенного оружия
-	max_ammunation,	// максимальный боезапас на оружии
-	damage,			// урон от одного выстрела
-	rate,			// скорострельность
+enum modificated_parametrs {	// РїР°СЂР°РјРµС‚СЂС‹, РєРѕС‚РѕСЂС‹Рµ РјРѕРіСѓС‚ Р±С‹С‚СЊ РјРѕРґРёС„РёС†РёСЂРѕРІР°РЅС‹
+	// РґР»СЏ РѕР±СЉРµРєС‚РІРѕ 0 - 5
+	HP,				// Р¶РёРІСѓС‡РµСЃС‚СЊ
+	speed,			// СЃРєРѕСЂРѕСЃС‚СЊ
+	range,			// РґР°Р»СЊРЅРѕСЃС‚СЊ С…РѕРґР° РѕР±СЉРµРєС‚Р°
+	storage,		// РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ СЃРєР»Р°РґР° РєРѕСЂР°Р±Р»СЏ
+	max_weapon,		// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РѕСЂСѓР¶РёСЏ
+	max_aircraft,	// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃР°РјРѕР»РµС‚РѕРІ РЅР° РєРѕСЂР°Р±Р»Рµ
+	// РґР»СЏ РІРѕРѕСЂСѓР¶РµРЅРёСЏ 6 - 9
+	radius,			// СЂР°РґРёСѓСЃ РґРµР№СЃС‚РІРёСЏ РѕРїСЂРµРґРµР»РµРЅРЅРѕРіРѕ РѕСЂСѓР¶РёСЏ
+	max_ammunation,	// РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ Р±РѕРµР·Р°РїР°СЃ РЅР° РѕСЂСѓР¶РёРё
+	damage,			// СѓСЂРѕРЅ РѕС‚ РѕРґРЅРѕРіРѕ РІС‹СЃС‚СЂРµР»Р°
+	rate,			// СЃРєРѕСЂРѕСЃС‚СЂРµР»СЊРЅРѕСЃС‚СЊ
 };
 
 struct param_mission {
-	int difficult;	// уровень сложности
-	int goal;		// цель для победы (в сумме уничтоженного)
-	bool mode;		// рельное время или пошагово
-	int max_ship;	// максимальное количество кораблей в одном флоте
-	bool side;		// какая цель - нападение или защита
+	int difficult;	// СѓСЂРѕРІРµРЅСЊ СЃР»РѕР¶РЅРѕСЃС‚Рё
+	int goal;		// С†РµР»СЊ РґР»СЏ РїРѕР±РµРґС‹ (РІ СЃСѓРјРјРµ СѓРЅРёС‡С‚РѕР¶РµРЅРЅРѕРіРѕ)
+	bool mode;		// СЂРµР»СЊРЅРѕРµ РІСЂРµРјСЏ РёР»Рё РїРѕС€Р°РіРѕРІРѕ
+	int max_ship;	// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕСЂР°Р±Р»РµР№ РІ РѕРґРЅРѕРј С„Р»РѕС‚Рµ
+	bool side;		// РєР°РєР°СЏ С†РµР»СЊ - РЅР°РїР°РґРµРЅРёРµ РёР»Рё Р·Р°С‰РёС‚Р°
 };
 
 struct param_weapon {
-	int max_ammunation;		// боезопас для оружия
-	int cost;				// стоимость оружия
-	const std::string name;	// название оружия
-	const weapons type;		// тип оружия
+	int max_ammunation;		// Р±РѕРµР·РѕРїР°СЃ РґР»СЏ РѕСЂСѓР¶РёСЏ
+	int cost;				// СЃС‚РѕРёРјРѕСЃС‚СЊ РѕСЂСѓР¶РёСЏ
+	const std::string name;	// РЅР°Р·РІР°РЅРёРµ РѕСЂСѓР¶РёСЏ
+	const weapons type;		// С‚РёРї РѕСЂСѓР¶РёСЏ
 };
 
-// неизменняемые параметры объекта, присваиваются при инциализации
+// РЅРµРёР·РјРµРЅРЅСЏРµРјС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РѕР±СЉРµРєС‚Р°, РїСЂРёСЃРІР°РёРІР°СЋС‚СЃСЏ РїСЂРё РёРЅС†РёР°Р»РёР·Р°С†РёРё
 struct const_param_object {
-		int cost;		// стоимость объекта
+		int cost;		// СЃС‚РѕРёРјРѕСЃС‚СЊ РѕР±СЉРµРєС‚Р°
 };
 
-// параметры объекта, которые могут быть изменены
+// РїР°СЂР°РјРµС‚СЂС‹ РѕР±СЉРµРєС‚Р°, РєРѕС‚РѕСЂС‹Рµ РјРѕРіСѓС‚ Р±С‹С‚СЊ РёР·РјРµРЅРµРЅС‹
 struct param_object {
-	int HP;		// максимальное количество прочности
-	int speed;	// скорость объекта
-	int range;	// дальность хода
+	int HP;		// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРѕС‡РЅРѕСЃС‚Рё
+	int speed;	// СЃРєРѕСЂРѕСЃС‚СЊ РѕР±СЉРµРєС‚Р°
+	int range;	// РґР°Р»СЊРЅРѕСЃС‚СЊ С…РѕРґР°
+};
+
+// РїР°СЂР°РјРµС‚СЂС‹ РєРѕСЂР°Р±Р»СЏ, РјРѕРіСѓС‚ Р±С‹С‚СЊ РёР·РјРµРЅРµРЅС‹
+struct param_ship {
+	int storage;	// С‘РјРєРѕСЃС‚СЊ СЃРєР»Р°РґР° СЃ Р±РѕРµРїСЂРёРїР°СЃР°РјРё
+	int max_weapon;	// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РѕСЂСѓР¶РёСЏ
 };
 
 /*
-класс таблицы для хранения указателей на корабли, сортируются по позывным
+РєР»Р°СЃСЃ С‚Р°Р±Р»РёС†С‹ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ СѓРєР°Р·Р°С‚РµР»РµР№ РЅР° РєРѕСЂР°Р±Р»Рё, СЃРѕСЂС‚РёСЂСѓСЋС‚СЃСЏ РїРѕ РїРѕР·С‹РІРЅС‹Рј
 */
 class table
 {
@@ -88,7 +94,7 @@ private:
 };
 
 /*
-шаблон контейнерного класса
+С€Р°Р±Р»РѕРЅ РєРѕРЅС‚РµР№РЅРµСЂРЅРѕРіРѕ РєР»Р°СЃСЃР°
 */
 template <typename T>
 class container
@@ -104,14 +110,14 @@ private:
 };
 
 /*
-класс миссии
+РєР»Р°СЃСЃ РјРёСЃСЃРёРё
 */
 class mission
 {
 public:
 	mission();
 	~mission();
-	const struct param_mission param;	// параметры миссии, загружаемы изначально
+	const struct param_mission param;	// РїР°СЂР°РјРµС‚СЂС‹ РјРёСЃСЃРёРё, Р·Р°РіСЂСѓР¶Р°РµРјС‹ РёР·РЅР°С‡Р°Р»СЊРЅРѕ
 
 	bool buy_ship(player& p);
 	void sell_ship(player& p);
@@ -130,17 +136,17 @@ public:
 	void general_death(player& p);
 
 protected:
-	int game_speed;		// темп игры
-	int visibility;		// радиус видимости объектов
-	map	arena;			// игровая карта
-	// список всех возможных коммандиров
+	int game_speed;		// С‚РµРјРї РёРіСЂС‹
+	int visibility;		// СЂР°РґРёСѓСЃ РІРёРґРёРјРѕСЃС‚Рё РѕР±СЉРµРєС‚РѕРІ
+	map	arena;			// РёРіСЂРѕРІР°СЏ РєР°СЂС‚Р°
+	// СЃРїРёСЃРѕРє РІСЃРµС… РІРѕР·РјРѕР¶РЅС‹С… РєРѕРјРјР°РЅРґРёСЂРѕРІ
 	std::vector <std::pair<std::string, std::string>> list;
-	table ships1;		// таблица кораблей пользователя
-	table ships2;		// таблица кораблей бота
+	table ships1;		// С‚Р°Р±Р»РёС†Р° РєРѕСЂР°Р±Р»РµР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	table ships2;		// С‚Р°Р±Р»РёС†Р° РєРѕСЂР°Р±Р»РµР№ Р±РѕС‚Р°
 };
 
 /*
-класс одного игрока (пользователь и AI)
+РєР»Р°СЃСЃ РѕРґРЅРѕРіРѕ РёРіСЂРѕРєР° (РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ Рё AI)
 */
 class player
 {
@@ -150,14 +156,14 @@ public:
 	friend class mission;
 	void set_general(std::pair<std::string, std::string>);
 protected:
-	int money;										// текущее количество денег
-	int costs;										// суммарно потрачено денег
-	int damage;										// суммарный урон игрока
-	std::pair<std::string, std::string> general;	// командующий флотом
+	int money;										// С‚РµРєСѓС‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РґРµРЅРµРі
+	int costs;										// СЃСѓРјРјР°СЂРЅРѕ РїРѕС‚СЂР°С‡РµРЅРѕ РґРµРЅРµРі
+	int damage;										// СЃСѓРјРјР°СЂРЅС‹Р№ СѓСЂРѕРЅ РёРіСЂРѕРєР°
+	std::pair<std::string, std::string> general;	// РєРѕРјР°РЅРґСѓСЋС‰РёР№ С„Р»РѕС‚РѕРј
 };
 
 /*
-класс игровой карты
+РєР»Р°СЃСЃ РёРіСЂРѕРІРѕР№ РєР°СЂС‚С‹
 */
 class map
 {
@@ -166,12 +172,12 @@ public:
 	~map();
 
 protected:
-	ptr<ptr<cell>> array;			// массив ячеек карты
-	const std::pair<int, int> size;	// размер карты
+	ptr<ptr<cell>> array;			// РјР°СЃСЃРёРІ СЏС‡РµРµРє РєР°СЂС‚С‹
+	const std::pair<int, int> size;	// СЂР°Р·РјРµСЂ РєР°СЂС‚С‹
 };
 
 /*
-класс одной клетки карты
+РєР»Р°СЃСЃ РѕРґРЅРѕР№ РєР»РµС‚РєРё РєР°СЂС‚С‹
 */
 class cell: public map
 {
@@ -180,12 +186,12 @@ public:
 	~cell();
 	void set_state(const states s);
 private:
-	states state;						// состояние ячейки
-	const std::pair<int, int> coord;	// координаты ячейки
+	states state;						// СЃРѕСЃС‚РѕСЏРЅРёРµ СЏС‡РµР№РєРё
+	const std::pair<int, int> coord;	// РєРѕРѕСЂРґРёРЅР°С‚С‹ СЏС‡РµР№РєРё
 };
 
 /*
-виртуальный класс для кораблей и самолетов
+РІРёСЂС‚СѓР°Р»СЊРЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РєРѕСЂР°Р±Р»РµР№ Рё СЃР°РјРѕР»РµС‚РѕРІ
 */
 class object
 {
@@ -199,62 +205,72 @@ public:
 	void modificate(const modificated_parametrs);
 	bool recharge();
 	void set_coord(const std::pair<int, int>);
+	void set_bonus(const float f);
 
-	// постояные параметры, определяемые при инициализации объекта
+	// РїРѕСЃС‚РѕСЏРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹, РѕРїСЂРµРґРµР»СЏРµРјС‹Рµ РїСЂРё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РѕР±СЉРµРєС‚Р°
 	const struct const_param_object c_param;
 
 protected:
-	void calculate_radius();
+	virtual void calculate_radius();
 
-	bool activate;						// флаг активации объекта в данный момент
-	int hp;								// количество прочности
-	int radius;							// максимальный радиус атаки
-	container<weapon> arms;				// набор оружия объекта
-	std::pair<int, int> currnet_coord;	// текущие координаты
-	std::pair<int, int> goal;			// целевые координаты (куда идет объект)
-	bool affiliation;					// принадлежность пользователю
-	int sum_costs;						// суммарная стоимость корабля
-	float bonus;						// бонус за командира или его отсутствие
-	// параметры, определяемые при создании объекта, которые могут быть изменены
+	bool activate;						// С„Р»Р°Рі Р°РєС‚РёРІР°С†РёРё РѕР±СЉРµРєС‚Р° РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚
+	int hp;								// РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРѕС‡РЅРѕСЃС‚Рё
+	int radius;							// РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°РґРёСѓСЃ Р°С‚Р°РєРё
+	container<weapon> arms;				// РЅР°Р±РѕСЂ РѕСЂСѓР¶РёСЏ РѕР±СЉРµРєС‚Р°
+	std::pair<int, int> currnet_coord;	// С‚РµРєСѓС‰РёРµ РєРѕРѕСЂРґРёРЅР°С‚С‹
+	std::pair<int, int> goal;			// С†РµР»РµРІС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ (РєСѓРґР° РёРґРµС‚ РѕР±СЉРµРєС‚)
+	bool affiliation;					// РїСЂРёРЅР°РґР»РµР¶РЅРѕСЃС‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ
+	int sum_costs;						// СЃСѓРјРјР°СЂРЅР°СЏ СЃС‚РѕРёРјРѕСЃС‚СЊ РєРѕСЂР°Р±Р»СЏ
+	float bonus;						// Р±РѕРЅСѓСЃ Р·Р° РєРѕРјР°РЅРґРёСЂР° РёР»Рё РµРіРѕ РѕС‚СЃСѓС‚СЃС‚РІРёРµ
+	// РїР°СЂР°РјРµС‚СЂС‹, РѕРїСЂРµРґРµР»СЏРµРјС‹Рµ РїСЂРё СЃРѕР·РґР°РЅРёРё РѕР±СЉРµРєС‚Р°, РєРѕС‚РѕСЂС‹Рµ РјРѕРіСѓС‚ Р±С‹С‚СЊ РёР·РјРµРЅРµРЅС‹
 	struct param_object param;
 };
 
 /*
-виртуальный класс кораблей
+РІРёСЂС‚СѓР°Р»СЊРЅС‹Р№ РєР»Р°СЃСЃ РєРѕСЂР°Р±Р»РµР№
 */
 class ship: public object
 {
 public:
-	ship(const struct const_param_object& c_p, const struct param_object& p, const bool a, const ships t) : object(c_p, p, a), type(t) {};
+	ship(const struct const_param_object& c_p,
+		 const struct param_object& p,
+		 const struct param_ship& p_s, 
+		 const bool a, const ships t, 
+		 std::pair<std::string, std::string>&& c, std::string&& n);
 	~ship();
 	std::vector<std::pair<int, int>> get_way(const std::pair<int, int>);
-	const ships type;								// тип корабля
+
+	const ships type;								// С‚РёРї РєРѕСЂР°Р±Р»СЏ
+
 protected:
-	std::pair<std::string, std::string> commander;	// звание и имя капитана судна
-	std::string name;								// имя судна
-	int ammunation;									// ёмкость склада с боеприпасами
-	int max_weapon;									// максимальное количество оружия
-	std::vector<int> ammo;							// боезапас по видам оружия
+	std::pair<std::string, std::string> commander;	// Р·РІР°РЅРёРµ Рё РёРјСЏ РєР°РїРёС‚Р°РЅР° СЃСѓРґРЅР°
+	std::string name;								// РёРјСЏ СЃСѓРґРЅР°
+	struct param_ship p_s;							// РјРѕРґРёС„РёС†РёСЂСѓРµРјС‹Рµ РїР°СЂР°РјРµС‚СЂС‹
+	std::vector<int> ammo;							// Р±РѕРµР·Р°РїР°СЃ РїРѕ РІРёРґР°Рј РѕСЂСѓР¶РёСЏ
 };
 
 /*
-виртуальный класс самолетов
+РІРёСЂС‚СѓР°Р»СЊРЅС‹Р№ РєР»Р°СЃСЃ СЃР°РјРѕР»РµС‚РѕРІ
 */
 class aircraft : public object
 {
 public:
-	aircraft(const struct const_param_object& c_p, const struct param_object& p, const bool a, const aircrafts t, const int r) : object(c_p, p, a), type(t), refueling(r) {};
+	aircraft(const struct const_param_object& c_p, 
+			 const struct param_object& p, const bool a, 
+			 const aircrafts t, const int r);
 	~aircraft();
-	const aircrafts type;	// тип самолета
-	const int refueling;	// время на заправку самолета
 	void return_back();
 	void transfer(ship& s);
+
+	const aircrafts type;	// С‚РёРї СЃР°РјРѕР»РµС‚Р°
+	const int refueling;	// РІСЂРµРјСЏ РЅР° Р·Р°РїСЂР°РІРєСѓ СЃР°РјРѕР»РµС‚Р°
+
 protected:
-	ship* affiliation_ship;	// корабль, которому принадлежит самолет
+	ship* affiliation_ship;	// РєРѕСЂР°Р±Р»СЊ, РєРѕС‚РѕСЂРѕРјСѓ РїСЂРёРЅР°РґР»РµР¶РёС‚ СЃР°РјРѕР»РµС‚
 };
 
 /*
-класс авианесущего крейсера
+РєР»Р°СЃСЃ Р°РІРёР°РЅРµСЃСѓС‰РµРіРѕ РєСЂРµР№СЃРµСЂР°
 */
 class air_cruiser: public ship
 {
@@ -263,13 +279,13 @@ public:
 	~air_cruiser();
 
 private:
-	int max_aircraft;					// максимальное количество самолетов
-	container<aircraft> aircrafts;		// все самолеты
-	std::vector<int> aircrafts_count;	// количество самолетов по типам
+	int max_aircraft;					// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃР°РјРѕР»РµС‚РѕРІ
+	container<aircraft> aircrafts;		// РІСЃРµ СЃР°РјРѕР»РµС‚С‹
+	std::vector<int> aircrafts_count;	// РєРѕР»РёС‡РµСЃС‚РІРѕ СЃР°РјРѕР»РµС‚РѕРІ РїРѕ С‚РёРїР°Рј
 };
 
 /*
-класс авианосца
+РєР»Р°СЃСЃ Р°РІРёР°РЅРѕСЃС†Р°
 */
 class air_carrier : public ship
 {
@@ -278,13 +294,13 @@ public:
 	~air_carrier();
 
 private:
-	int max_aircraft;					// максимальное количество самолетов
-	container<aircraft> aircrafts;		// все самолеты
-	std::vector<int> aircrafts_count;	// количество самолетов по типам
+	int max_aircraft;					// РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃР°РјРѕР»РµС‚РѕРІ
+	container<aircraft> aircrafts;		// РІСЃРµ СЃР°РјРѕР»РµС‚С‹
+	std::vector<int> aircrafts_count;	// РєРѕР»РёС‡РµСЃС‚РІРѕ СЃР°РјРѕР»РµС‚РѕРІ РїРѕ С‚РёРїР°Рј
 };
 
 /*
-класс крейсера
+РєР»Р°СЃСЃ РєСЂРµР№СЃРµСЂР°
 */
 class cruiser : public ship
 {
@@ -297,7 +313,7 @@ private:
 };
 
 /*
-класс истребителя
+РєР»Р°СЃСЃ РёСЃС‚СЂРµР±РёС‚РµР»СЏ
 */
 class fighter: public aircraft
 {
@@ -310,7 +326,7 @@ private:
 };
 
 /*
-класс бомбардировщика
+РєР»Р°СЃСЃ Р±РѕРјР±Р°СЂРґРёСЂРѕРІС‰РёРєР°
 */
 class bomber : public aircraft
 {
@@ -323,7 +339,7 @@ private:
 };
 
 /*
-класс штурмовика
+РєР»Р°СЃСЃ С€С‚СѓСЂРјРѕРІРёРєР°
 */
 class front_bomber : public aircraft
 {
@@ -336,18 +352,18 @@ private:
 };
 
 /*
-класс оружия объектов
+РєР»Р°СЃСЃ РѕСЂСѓР¶РёСЏ РѕР±СЉРµРєС‚РѕРІ
 */
 class weapon
 {
 public:
 	weapon(const struct param_weapon p);
 	~weapon();
-	const struct param_weapon param;	// параметры, загружаемые изначально
+	const struct param_weapon param;	// РїР°СЂР°РјРµС‚СЂС‹, Р·Р°РіСЂСѓР¶Р°РµРјС‹Рµ РёР·РЅР°С‡Р°Р»СЊРЅРѕ
 private:
-	int radius;				// радиус действия
-	int ammination;			// боезапас
-	bool activate;			// флаг активации
-	int damage;				// наносимый урон
-	int rate;				// скорострельность
+	int radius;				// СЂР°РґРёСѓСЃ РґРµР№СЃС‚РІРёСЏ
+	int ammination;			// Р±РѕРµР·Р°РїР°СЃ
+	bool activate;			// С„Р»Р°Рі Р°РєС‚РёРІР°С†РёРё
+	int damage;				// РЅР°РЅРѕСЃРёРјС‹Р№ СѓСЂРѕРЅ
+	int rate;				// СЃРєРѕСЂРѕСЃС‚СЂРµР»СЊРЅРѕСЃС‚СЊ
 };

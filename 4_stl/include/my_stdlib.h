@@ -1,30 +1,30 @@
-#pragma once
+п»ї#pragma once
 
-// стандартное
+// СЃС‚Р°РЅРґР°СЂС‚РЅРѕРµ
 #include <math.h>
 #include <corecrt_math_defines.h>
 #include <stdlib.h>
 #include <utility>
-// ошибки памяти
+// РѕС€РёР±РєРё РїР°РјСЏС‚Рё
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-// ввод
+// РІРІРѕРґ
 #include <iostream>
 #include <limits>
 #include <sstream>
 #include <conio.h>
 #include <iomanip>
-// работа со временем
+// СЂР°Р±РѕС‚Р° СЃРѕ РІСЂРµРјРµРЅРµРј
 #include <time.h>
 #include <dos.h>
-// контейнеры
+// РєРѕРЅС‚РµР№РЅРµСЂС‹
 #include <string>
 #include <vector>
 #include <map>
 
 #define _CRT_SECURE_NO_WARNINGS
 
-// функция ввода числа
+// С„СѓРЅРєС†РёСЏ РІРІРѕРґР° С‡РёСЃР»Р°
 template <class T>
 int getn(T& a) {
 	using std::cin;
@@ -41,7 +41,7 @@ int getn(T& a) {
 	return 1;
 }
 
-// функция изменения объема выделенной памяти
+// С„СѓРЅРєС†РёСЏ РёР·РјРµРЅРµРЅРёСЏ РѕР±СЉРµРјР° РІС‹РґРµР»РµРЅРЅРѕР№ РїР°РјСЏС‚Рё
 template <class T>
 T* r_alloc(const T* array, const int new_size, int length) {
 	T* n_array;
@@ -71,16 +71,16 @@ T* r_alloc(const T* array, const int new_size, int length) {
 	return n_array;
 }
 
-// функция ввода строки произвольной длины
+// С„СѓРЅРєС†РёСЏ РІРІРѕРґР° СЃС‚СЂРѕРєРё РїСЂРѕРёР·РІРѕР»СЊРЅРѕР№ РґР»РёРЅС‹
 char* getstr(std::istream& istream);
 
-// возвращает случайное число в диапозоне от - N до N - 1 включительно
+// РІРѕР·РІСЂР°С‰Р°РµС‚ СЃР»СѓС‡Р°Р№РЅРѕРµ С‡РёСЃР»Рѕ РІ РґРёР°РїРѕР·РѕРЅРµ РѕС‚ - N РґРѕ N - 1 РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ
 int random(const int N) noexcept;
 
-// функция, генерирующая случайную строку длины n
+// С„СѓРЅРєС†РёСЏ, РіРµРЅРµСЂРёСЂСѓСЋС‰Р°СЏ СЃР»СѓС‡Р°Р№РЅСѓСЋ СЃС‚СЂРѕРєСѓ РґР»РёРЅС‹ n
 char* random_str(const int n) noexcept;
 
-// умный указатель
+// СѓРјРЅС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ
 template<class T>
 class ptr
 {
@@ -118,5 +118,5 @@ public:
 	bool isNull() const { return m_ptr == nullptr; }
 };
 
-// работа с консолью
+// СЂР°Р±РѕС‚Р° СЃ РєРѕРЅСЃРѕР»СЊСЋ
 #include <Windows.h>
