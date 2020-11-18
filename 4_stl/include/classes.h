@@ -257,7 +257,7 @@ class aircraft : public object
 public:
 	aircraft(const struct const_param_object& c_p, 
 			 const struct param_object& p, const bool a, 
-			 const aircrafts t, const int r);
+			 const aircrafts t, const int r, ship* const s);
 	~aircraft();
 	void return_back();
 	void transfer(ship& s);
