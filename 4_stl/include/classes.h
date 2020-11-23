@@ -5,14 +5,14 @@
 enum ships
 {
 	cruiser,
-	aircraft_carrier,
-	aircraft_carrier_cruiser
+	aircraft_carrier_cruiser,
+	aircraft_carrier
 };
 
 enum aircrafts {
 	fighter,
-	bomber,
-	front_bomber
+	front_bomber,
+	bomber
 };
 
 enum weapons {
@@ -275,13 +275,16 @@ protected:
 class air_cruiser: public ship
 {
 public:
-	air_cruiser();
+	air_cruiser(const struct const_param_object& c_p,
+		const struct param_object& p,
+		const struct param_ship& p_s, const bool a, const ships t,
+		std::pair<std::string, std::string>&& c, std::string&& n, const int m);
 	~air_cruiser();
 
 private:
 	int max_aircraft;					// максимальное количество самолетов
-	container<aircraft> aircrafts;		// все самолеты
-	std::vector<int> aircrafts_count;	// количество самолетов по типам
+	container<aircraft> own_aircrafts;		// все самолеты
+	int aircrafts_count[2];	// количество самолетов по типам
 };
 
 /*
@@ -290,13 +293,16 @@ private:
 class air_carrier : public ship
 {
 public:
-	air_carrier();
+	air_carrier(const struct const_param_object& c_p,
+		const struct param_object& p,
+		const struct param_ship& p_s, const bool a, const ships t,
+		std::pair<std::string, std::string>&& c, std::string&& n, const int m);
 	~air_carrier();
 
 private:
 	int max_aircraft;					// максимальное количество самолетов
-	container<aircraft> aircrafts;		// все самолеты
-	std::vector<int> aircrafts_count;	// количество самолетов по типам
+	container<aircraft> own_aircrafts;		// все самолеты
+	int aircrafts_count[3];	// количество самолетов по типам
 };
 
 /*
@@ -305,7 +311,10 @@ private:
 class cruiser : public ship
 {
 public:
-	cruiser();
+	cruiser(const struct const_param_object& c_p,
+		const struct param_object& p,
+		const struct param_ship& p_s, const bool a, const ships t,
+		std::pair<std::string, std::string>&& c, std::string&& n);
 	~cruiser();
 
 private:
@@ -318,7 +327,9 @@ private:
 class fighter: public aircraft
 {
 public:
-	fighter();
+	fighter(const struct const_param_object& c_p,
+		const struct param_object& p, const bool a,
+		const aircrafts t, const int r, ship* const s);
 	~fighter();
 
 private:
@@ -331,7 +342,9 @@ private:
 class bomber : public aircraft
 {
 public:
-	bomber();
+	bomber(const struct const_param_object& c_p,
+		const struct param_object& p, const bool a,
+		const aircrafts t, const int r, ship* const s);
 	~bomber();
 
 private:
@@ -344,7 +357,9 @@ private:
 class front_bomber : public aircraft
 {
 public:
-	front_bomber();
+	front_bomber(const struct const_param_object& c_p,
+		const struct param_object& p, const bool a,
+		const aircrafts t, const int r, ship* const s);
 	~front_bomber();
 
 private:
