@@ -31,13 +31,15 @@ enum modificated_parametrs {	// параметры, которые могут б
 	storage,		// максимальный размер склада корабля
 	max_weapon,		// максимальное количество оружия
 	max_aircraft,	// максимальное количество самолетов на корабле
-	// для вооружения 6 - 9
-	radius,			// радиус действия определенного оружия
-	max_ammunation,	// максимальный боезапас на оружии
-	damage,			// урон от одного выстрела
-	rate,			// скорострельность
+	// для вооружения 6 - 8
+	Radius,			// радиус действия определенного оружия
+	Damage,			// урон от одного выстрела
+	Rate,			// скорострельность
 };
 
+struct config {
+
+};
 
 struct param_mission {
 	int difficult;	// уровень сложности
@@ -50,7 +52,6 @@ struct param_mission {
 struct param_weapon {
 	int max_ammunation;		// боезопас для оружия
 	int cost;				// стоимость оружия
-	const std::string name;	// название оружия
 	const weapons type;		// тип оружия
 };
 
@@ -64,11 +65,11 @@ struct param_object {
 	int HP;		// максимальное количество прочности
 	int speed;	// скорость объекта
 	int range;	// дальность хода
+	int storage;	// ёмкость склада с боеприпасами
 };
 
 // параметры корабля, могут быть изменены
 struct param_ship {
-	int storage;	// ёмкость склада с боеприпасами
 	int max_weapon;	// максимальное количество оружия
 };
 
@@ -90,21 +91,23 @@ public:
 	void set_coord(const std::pair<int, int>);
 	void set_bonus(const float f);
 
+	friend class weapon;
+
 	// постояные параметры, определяемые при инициализации объекта
 	const struct const_param_object c_param;
 
 protected:
-	virtual void calculate_radius();
+	virtual void download_arms(std::vector<std::vector<weapon>>& v);
+	void correct();
 
-	bool activate;						// флаг активации объекта в данный момент
-	int hp;								// количество прочности
-	int radius;							// максимальный радиус атаки
-	container<weapon> arms;				// набор оружия объекта
-	std::pair<int, int> currnet_coord;	// текущие координаты
-	std::pair<int, int> goal;			// целевые координаты (куда идет объект)
-	bool affiliation;					// принадлежность пользователю
-	int sum_costs;						// суммарная стоимость корабля
-	float bonus;						// бонус за командира или его отсутствие
+	bool activate;							// флаг активации объекта в данный момент
+	int hp;									// количество прочности
+	std::vector<std::vector<weapon>> arms;	// набор оружия объекта
+	std::pair<int, int> currnet_coord;		// текущие координаты
+	std::pair<int, int> goal;				// целевые координаты (куда идет объект)
+	bool affiliation;						// принадлежность пользователю
+	int sum_costs;							// суммарная стоимость корабля
+	float bonus;							// бонус за командира или его отсутствие
 	// параметры, определяемые при создании объекта, которые могут быть изменены
 	struct param_object param;
 };
@@ -127,10 +130,14 @@ public:
 	const ships type;								// тип корабля
 
 protected:
+	void calculate_radius();
+	virtual void download_arms(std::vector<std::vector<weapon>>& v);
+
 	std::pair<std::string, std::string> commander;	// звание и имя капитана судна
 	std::string name;								// имя судна
 	struct param_ship p_s;							// модифицируемые параметры
 	std::vector<int> ammo;							// боезапас по видам оружия
+	int radius;										// максимальный радиус атаки
 };
 
 /*
@@ -150,6 +157,8 @@ public:
 	const int refueling;	// время на заправку самолета
 
 protected:
+	virtual void download_arms(std::vector<std::vector<weapon>>& v);
+
 	ship* affiliation_ship;	// корабль, которому принадлежит самолет
 };
 
@@ -166,8 +175,11 @@ public:
 	~air_cruiser();
 
 private:
+	void download_arms(std::vector<std::vector<weapon>>& v);
+
+
 	int max_aircraft;					// максимальное количество самолетов
-	container<aircraft> own_aircrafts;		// все самолеты
+	std::vector<aircraft> own_aircrafts;		// все самолеты
 	int aircrafts_count[2];	// количество самолетов по типам
 };
 
@@ -184,8 +196,10 @@ public:
 	~air_carrier();
 
 private:
+	void download_arms(std::vector<std::vector<weapon>>& v);
+
 	int max_aircraft;					// максимальное количество самолетов
-	container<aircraft> own_aircrafts;		// все самолеты
+	std::vector<aircraft> own_aircrafts;		// все самолеты
 	int aircrafts_count[3];	// количество самолетов по типам
 };
 
@@ -202,7 +216,7 @@ public:
 	~cruiser();
 
 private:
-
+	void download_arms(std::vector<std::vector<weapon>>& v);
 };
 
 /*
@@ -256,12 +270,20 @@ private:
 class weapon
 {
 public:
-	weapon(const struct param_weapon p);
+	weapon(const struct param_weapon& p, const int r, const int d, 
+		const int rate, object* const o);
 	~weapon();
+	void attack(object& o) noexcept;
+	void modificate(const modificated_parametrs a) noexcept;
+	bool recharge() noexcept;
+
 	const struct param_weapon param;	// параметры, загружаемые изначально
 private:
+	int decrease_ammunation() noexcept;
+
+	object* o;				// объект, которому оружие принадлежит
 	int radius;				// радиус действия
-	int ammination;			// боезапас
+	int ammunation;			// боезапас
 	bool activate;			// флаг активации
 	int damage;				// наносимый урон
 	int rate;				// скорострельность
