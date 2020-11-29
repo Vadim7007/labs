@@ -55,7 +55,7 @@ struct config {	// информация, загружаемая из конфи�
 		int cost;				// стоимость оружия
 	};
 
-	const_param_weapon c_p_w;
+	const_param_weapon c_p_w[3];
 
 	// параметры оружия, которые могут быть изменены
 	struct param_weapon {
@@ -64,14 +64,15 @@ struct config {	// информация, загружаемая из конфи�
 		int rate;				// скорострельность
 	};
 
-	param_weapon p_w;
+	param_weapon p_w[3];
 
 	// неизменняемые параметры объекта, присваиваются при инциализации
 	struct const_param_object {
 		int cost;		// стоимость объекта
 	};
 
-	const_param_object c_p_o;
+	const_param_object c_p_o[3];
+
 
 	// параметры объекта, которые могут быть изменены
 	struct param_object {
@@ -81,14 +82,14 @@ struct config {	// информация, загружаемая из конфи�
 		int storage;	// ёмкость склада с боеприпасами
 	};
 
-	struct param_object p_o;
+	struct param_object p_o[3];
 
 	// параметры корабля, могут быть изменены
 	struct param_ship {
 		int max_weapon;	// максимальное количество оружия
 	};
 
-	struct param_ship p_s;
+	struct param_ship p_s[3];
 };
 
 
@@ -102,26 +103,30 @@ public:
 	~object();
 	void destroyed();
 	bool move(const std::pair<int, int>);
-	void attack(object& o);
+	virtual bool attack(aircraft& a) = 0;
+	virtual bool attack(ship& s) = 0;
 	void modificate(const modificated_parametrs);
 	bool recharge();
 	void set_coord(const std::pair<int, int>);
-	void set_bonus(const float f);
 
 	friend class weapon;
 
+	friend int distance(const object& a, const object& b);
+
 protected:
 	virtual void download_arms(std::vector<std::vector<weapon>>& v) = 0;
+	void calculate_radius();	// вычисляет максимальную дальность атаки
 	void correct();
 
+	int radius;								// максимальная дальность атакаи
 	bool activate;							// флаг активации объекта в данный момент
 	int hp;									// количество прочности
-	std::vector<std::vector<weapon>> arms;	// набор оружия объекта
+	//std::vector<std::vector<weapon>> arms;	// набор оружия объекта КОСТЫЛЬ
 	std::pair<int, int> currnet_coord;		// текущие координаты
 	std::pair<int, int> goal;				// целевые координаты (куда идет объект)
 	bool affiliation;						// принадлежность пользователю
 	int sum_costs;							// суммарная стоимость корабля
-	float bonus;							// бонус за командира или его отсутствие
+	std::vector<int> ammo;					// боезапас по видам оружия
 	// параметры, определяемые при создании объекта
 	struct config param;
 };
@@ -137,16 +142,14 @@ public:
 	~ship();
 	std::vector<std::pair<int, int>> get_way(const std::pair<int, int>);
 	std::string get_name() const;
+	void set_bonus(const float f);
 
-	const ships type;	// тип корабля
+	const ships type;	// тип корабля	
 
 protected:
-	void calculate_radius();
-	virtual void download_arms(std::vector<std::vector<weapon>>& v);
-
+	float bonus = 1;								// бонус за командира или его отсутствие
 	std::pair<std::string, std::string> commander;	// звание и имя капитана судна
 	std::string name;								// имя судна
-	std::vector<int> ammo;							// боезапас по видам оружия
 	int radius;										// максимальный радиус атаки
 };
 
@@ -161,6 +164,10 @@ public:
 	~aircraft();
 	void return_back();
 	void transfer(ship& s);
+	bool attack(aircraft& a);
+
+	std::vector<std::vector<weapon>> arms;	// набор оружия объекта КОСТЫЛЬ
+
 
 	const aircrafts type;	// тип самолета
 	const int refueling;	// время на заправку самолета
@@ -216,7 +223,6 @@ public:
 	cruiser(const struct config& p, const bool a, const ships t,
 		std::pair<std::string, std::string>&& c, std::string&& n);
 	~cruiser();
-
 private:
 	void download_arms(std::vector<std::vector<weapon>>& v);
 };
@@ -269,17 +275,18 @@ private:
 class weapon
 {
 public:
-	weapon(object* const o, const weapons type);
-	~weapon();
+	weapon(object* const o, const weapons t);
+	~weapon() { this->affilation_object = nullptr; };
 	void attack(object& o) noexcept;
 	void modificate(const modificated_parametrs a) noexcept;
 	bool recharge() noexcept;
 
+	const weapons type;
+
 private:
 	int decrease_ammunation() noexcept;
 
-	object* o;				// объект, которому оружие принадлежит
-	int radius;				// радиус действия
-	int ammunation;			// боезапас
-	bool activate;			// флаг активации
+	object* affilation_object;	// объект, которому оружие принадлежит
+	int ammunation;				// боезапас
+	bool activate;				// флаг активации
 };
