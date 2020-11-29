@@ -1,44 +1,36 @@
 ﻿#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/units_classes.h"
 
 
-object::object(const struct const_param_object& c_p, 
-			   const struct param_object& p, const bool affilation) noexcept
-	: c_param(c_p) {
+object::object(const struct config& p, const bool affilation) noexcept {
 	this->param = p;
 	this->activate = affilation;
 	this->bonus = 1;
 	this->currnet_coord = { 0, 0 };
 	this->goal = this->currnet_coord;
-	this->hp = this->param.HP;
-	this->sum_costs = this->c_param.cost;
+	this->hp = this->param.p_o.HP;
+	this->sum_costs = this->param.c_p_o.cost;
 };
 
-ship::ship (const struct const_param_object& c_p,
-			const struct param_object& p,
-			const struct param_ship& p_s, const bool a, const ships t,
+ship::ship(const struct config& p, const bool a, const ships t,
 			std::pair<std::string, std::string>&& c, std::string&& n) noexcept
-	: object(c_p, p, a), type(t) {
+	: object(p, a), type(t) {
 	this->commander = c;
 	this->name = n;
-	this->p_s = p_s;
 	this->ammo[light] = 0;
 	this->ammo[middle] = 0;
 	this->ammo[heavy] = 0;
 };
 
-aircraft::aircraft(const struct const_param_object& c_p, 
-				   const struct param_object& p, const bool a,	
+aircraft::aircraft(const struct config& p, const bool a,
 				   const aircrafts t, const int r, ship* const s) 
-	: object(c_p, p, a), type(t), refueling(r) {
+	: object(p, a), type(t), refueling(r) {
 	this->affiliation_ship = s;
 };
 
-air_cruiser::air_cruiser(const struct const_param_object& c_p,
-						 const struct param_object& p,
-						 const struct param_ship& p_s, const bool a, 
-						 const ships t, std::pair<std::string, std::string>&& c,
-						 std::string&& n, const int m)
-	: ship(c_p, p, p_s, a, t,	std::move(c), std::move(n)) {
+air_cruiser::air_cruiser(const struct config& p, const bool a, const ships t,
+	const int m, std::pair<std::string, std::string>&& c, std::string&& n)
+	: ship(p, a, t, std::move(c), std::move(n)) {
+	
 	download_arms(this->arms);
 	calculate_radius();
 	this->max_aircraft = m;
@@ -47,16 +39,14 @@ air_cruiser::air_cruiser(const struct const_param_object& c_p,
 }
 
 void air_cruiser::download_arms(std::vector<std::vector<weapon>>& v) {
-	v[light]
-	v[middle]
+	v[light];
+	v[middle];
 }
 
-air_carrier::air_carrier(const struct const_param_object& c_p,
-						 const struct param_object& p,
-						 const struct param_ship& p_s, const bool a, 
-						 const ships t,	std::pair<std::string, std::string>&& c,
-						 std::string&& n, const int m)
-	: ship(c_p, p, p_s, a, t, std::move(c), std::move(n)) {
+air_carrier::air_carrier(const struct config& p, const bool a, const ships t,
+	const int m, std::pair<std::string, std::string>&& c, std::string&& n)
+	: ship(p, a, t, std::move(c), std::move(n)) {
+	
 	download_arms(this->arms);
 	calculate_radius();
 	this->max_aircraft = m;
@@ -65,53 +55,44 @@ air_carrier::air_carrier(const struct const_param_object& c_p,
 	this->aircrafts_count[bomber] = 0;
 }
 
-cruiser::cruiser(const struct const_param_object& c_p,
-				 const struct param_object& p,
-				 const struct param_ship& p_s, const bool a, const ships t,
+cruiser::cruiser(const struct config& p, const bool a, const ships t,
 				 std::pair<std::string, std::string>&& c, std::string&& n)
-	: ship(c_p, p, p_s, a, t, std::move(c), std::move(n)) {
+	: ship(p, a, t, std::move(c), std::move(n)) {
+	
 	download_arms(this->arms);
 	calculate_radius();
 }
 
-fighter::fighter(const struct const_param_object& c_p,
-				 const struct param_object& p, const bool a,
-				 const aircrafts t, const int r, ship* const s)
-	: aircraft(c_p, p, a, t, r, s) {
+fighter::fighter(const struct config& p, const bool a,
+	const aircrafts t, const int r, ship* const s)
+	: aircraft(p, a, t, r, s) {
 
 }
 
-front_bomber::front_bomber(const struct const_param_object& c_p,
-						   const struct param_object& p, const bool a,
-						   const aircrafts t, const int r, ship* const s)
-	: aircraft(c_p, p, a, t, r, s) {
+front_bomber::front_bomber(const struct config& p, const bool a,
+	const aircrafts t, const int r, ship* const s)
+	: aircraft(p, a, t, r, s) {
 
 }
 
-bomber::bomber(const struct const_param_object& c_p,
-			   const struct param_object& p, const bool a,
-			   const aircrafts t, const int r, ship* const s)
-	: aircraft(c_p, p, a, t, r, s) {
+bomber::bomber(const struct config& p, const bool a,
+	const aircrafts t, const int r, ship* const s)
+	: aircraft(p, a, t, r, s) {
 
 }
 
-weapon::weapon(const struct param_weapon& p, const int r, 
-	const int d, const int rate, object* const o) 
-	: param(p) {
+weapon::weapon(object* const o, const weapons type) {
 
 	this->o = o;
-	this->radius = r;
-	this->ammunation = this->param.max_ammunation;
+	this->ammunation = this->o->param.c_p_w.max_ammunation;
 	this->activate = true;
-	this->damage = d;
-	this->rate = rate;
 }
 
 void weapon::attack(object& o) {
 	// количество возможных зарядов для атаки
 	int k = this->decrease_ammunation();
 	// суммарный урон
-	int d = k * this->damage;
+	int d = k * this->o->param.p_w.damage;
 
 	// урон по обьекту
 	o.hp -= d;
@@ -120,11 +101,12 @@ void weapon::attack(object& o) {
 
 // возвращает, насколько уменьшилс боезапас
 int weapon::decrease_ammunation() {
-	if (this->rate >= this->ammunation)
+	int rate = this->o->param.p_w.rate;
+	if (rate >= this->ammunation)
 	{
 		if (this->recharge()) {
-			this->ammunation -= this->rate;
-			return this->rate;
+			this->ammunation -= rate;
+			return rate;
 		}
 		else {
 			int k = this->ammunation;
@@ -133,21 +115,21 @@ int weapon::decrease_ammunation() {
 			return k;
 		}
 	}
-	this->ammunation -= this->rate;
-	return this->rate;
+	this->ammunation -= rate;
+	return rate;
 }
 
 // возвращает, удалось ли полностью перезарядить оружие
 bool weapon::recharge() {
-	int nessesary = this->param.max_ammunation - this->ammunation;
-	if (this->o->param.storage < nessesary)
+	int nessesary = this->o->param.c_p_w.max_ammunation - this->ammunation;
+	if (this->o->param.p_o.storage < nessesary)
 	{
-		this->ammunation += this->o->param.storage;
-		this->o->param.storage = 0;
+		this->ammunation += this->o->param.p_o.storage;
+		this->o->param.p_o.storage = 0;
 		return false;
 	}
 	else {
-		this->o->param.storage -= nessesary;
+		this->o->param.p_o.storage -= nessesary;
 		this->ammunation += nessesary;
 		return true;
 	}
@@ -157,13 +139,13 @@ void weapon::modificate(const modificated_parametrs a) {
 	switch (a)
 	{
 	case Radius:
-		this->radius *= 1.1;
+		this->o->param.p_w.radius *= 1.1;
 		break;
 	case Damage:
-		this->damage *= 1.1;
+		this->o->param.p_w.damage *= 1.1;
 		break;
 	case Rate:
-		this->rate *= 1.1;
+		this->o->param.p_w.rate *= 1.1;
 		break;
 	}
 	return;

@@ -37,40 +37,58 @@ enum modificated_parametrs {	// параметры, которые могут б
 	Rate,			// скорострельность
 };
 
-struct config {
+struct config {	// информация, загружаемая из конфигурационных файлов
+	// парамеры миссии
+	struct param_mission {
+		int difficult;	// уровень сложности
+		int goal;		// цель для победы (в сумме уничтоженного)
+		bool mode;		// рельное время или пошагово
+		int max_ship;	// максимальное количество кораблей в одном флоте
+		bool side;		// какая цель - нападение или защита
+	};
 
-};
+	struct param_mission p_m;
 
-struct param_mission {
-	int difficult;	// уровень сложности
-	int goal;		// цель для победы (в сумме уничтоженного)
-	bool mode;		// рельное время или пошагово
-	int max_ship;	// максимальное количество кораблей в одном флоте
-	bool side;		// какая цель - нападение или защита
-};
+	// неизменяемые параметры оружия
+	struct const_param_weapon {
+		int max_ammunation;		// боезопас для оружия
+		int cost;				// стоимость оружия
+	};
 
-struct param_weapon {
-	int max_ammunation;		// боезопас для оружия
-	int cost;				// стоимость оружия
-	const weapons type;		// тип оружия
-};
+	const_param_weapon c_p_w;
 
-// неизменняемые параметры объекта, присваиваются при инциализации
-struct const_param_object {
+	// параметры оружия, которые могут быть изменены
+	struct param_weapon {
+		int radius;				// радиус действия
+		int damage;				// наносимый урон
+		int rate;				// скорострельность
+	};
+
+	param_weapon p_w;
+
+	// неизменняемые параметры объекта, присваиваются при инциализации
+	struct const_param_object {
 		int cost;		// стоимость объекта
-};
+	};
 
-// параметры объекта, которые могут быть изменены
-struct param_object {
-	int HP;		// максимальное количество прочности
-	int speed;	// скорость объекта
-	int range;	// дальность хода
-	int storage;	// ёмкость склада с боеприпасами
-};
+	const_param_object c_p_o;
 
-// параметры корабля, могут быть изменены
-struct param_ship {
-	int max_weapon;	// максимальное количество оружия
+	// параметры объекта, которые могут быть изменены
+	struct param_object {
+		int HP;		// максимальное количество прочности
+		int speed;	// скорость объекта
+		int range;	// дальность хода
+		int storage;	// ёмкость склада с боеприпасами
+	};
+
+	struct param_object p_o;
+
+	// параметры корабля, могут быть изменены
+	struct param_ship {
+		int max_weapon;	// максимальное количество оружия
+	};
+
+	struct param_ship p_s;
 };
 
 
@@ -80,8 +98,7 @@ struct param_ship {
 class object
 {
 public:
-	object(const struct const_param_object& c_p,
-		   const struct param_object& p, const bool a);
+	object(const struct config& p, const bool a);
 	~object();
 	void destroyed();
 	bool move(const std::pair<int, int>);
@@ -93,11 +110,8 @@ public:
 
 	friend class weapon;
 
-	// постояные параметры, определяемые при инициализации объекта
-	const struct const_param_object c_param;
-
 protected:
-	virtual void download_arms(std::vector<std::vector<weapon>>& v);
+	virtual void download_arms(std::vector<std::vector<weapon>>& v) = 0;
 	void correct();
 
 	bool activate;							// флаг активации объекта в данный момент
@@ -108,8 +122,8 @@ protected:
 	bool affiliation;						// принадлежность пользователю
 	int sum_costs;							// суммарная стоимость корабля
 	float bonus;							// бонус за командира или его отсутствие
-	// параметры, определяемые при создании объекта, которые могут быть изменены
-	struct param_object param;
+	// параметры, определяемые при создании объекта
+	struct config param;
 };
 
 /*
@@ -118,16 +132,13 @@ protected:
 class ship: public object
 {
 public:
-	ship(const struct const_param_object& c_p,
-		 const struct param_object& p,
-		 const struct param_ship& p_s, 
-		 const bool a, const ships t, 
+	ship(const struct config& p, const bool a, const ships t,
 		 std::pair<std::string, std::string>&& c, std::string&& n);
 	~ship();
 	std::vector<std::pair<int, int>> get_way(const std::pair<int, int>);
 	std::string get_name() const;
 
-	const ships type;								// тип корабля
+	const ships type;	// тип корабля
 
 protected:
 	void calculate_radius();
@@ -135,7 +146,6 @@ protected:
 
 	std::pair<std::string, std::string> commander;	// звание и имя капитана судна
 	std::string name;								// имя судна
-	struct param_ship p_s;							// модифицируемые параметры
 	std::vector<int> ammo;							// боезапас по видам оружия
 	int radius;										// максимальный радиус атаки
 };
@@ -146,9 +156,8 @@ protected:
 class aircraft : public object
 {
 public:
-	aircraft(const struct const_param_object& c_p, 
-			 const struct param_object& p, const bool a, 
-			 const aircrafts t, const int r, ship* const s);
+	aircraft(const struct config& p, const bool a, 
+		const aircrafts t, const int r, ship* const s);
 	~aircraft();
 	void return_back();
 	void transfer(ship& s);
@@ -168,15 +177,12 @@ protected:
 class air_cruiser: public ship
 {
 public:
-	air_cruiser(const struct const_param_object& c_p,
-		const struct param_object& p,
-		const struct param_ship& p_s, const bool a, const ships t,
-		std::pair<std::string, std::string>&& c, std::string&& n, const int m);
+	air_cruiser(const struct config& p, const bool a, const ships t,
+		const int m, std::pair<std::string, std::string>&& c, std::string&& n);
 	~air_cruiser();
 
 private:
 	void download_arms(std::vector<std::vector<weapon>>& v);
-
 
 	int max_aircraft;					// максимальное количество самолетов
 	std::vector<aircraft> own_aircrafts;		// все самолеты
@@ -189,10 +195,8 @@ private:
 class air_carrier : public ship
 {
 public:
-	air_carrier(const struct const_param_object& c_p,
-		const struct param_object& p,
-		const struct param_ship& p_s, const bool a, const ships t,
-		std::pair<std::string, std::string>&& c, std::string&& n, const int m);
+	air_carrier(const struct config& p, const bool a, const ships t,
+		const int m, std::pair<std::string, std::string>&& c, std::string&& n);
 	~air_carrier();
 
 private:
@@ -209,9 +213,7 @@ private:
 class cruiser : public ship
 {
 public:
-	cruiser(const struct const_param_object& c_p,
-		const struct param_object& p,
-		const struct param_ship& p_s, const bool a, const ships t,
+	cruiser(const struct config& p, const bool a, const ships t,
 		std::pair<std::string, std::string>&& c, std::string&& n);
 	~cruiser();
 
@@ -225,8 +227,7 @@ private:
 class fighter: public aircraft
 {
 public:
-	fighter(const struct const_param_object& c_p,
-		const struct param_object& p, const bool a,
+	fighter(const struct config& p, const bool a,
 		const aircrafts t, const int r, ship* const s);
 	~fighter();
 
@@ -240,8 +241,7 @@ private:
 class bomber : public aircraft
 {
 public:
-	bomber(const struct const_param_object& c_p,
-		const struct param_object& p, const bool a,
+	bomber(const struct config& p, const bool a,
 		const aircrafts t, const int r, ship* const s);
 	~bomber();
 
@@ -255,8 +255,7 @@ private:
 class front_bomber : public aircraft
 {
 public:
-	front_bomber(const struct const_param_object& c_p,
-		const struct param_object& p, const bool a,
+	front_bomber(const struct config& p, const bool a,
 		const aircrafts t, const int r, ship* const s);
 	~front_bomber();
 
@@ -270,14 +269,12 @@ private:
 class weapon
 {
 public:
-	weapon(const struct param_weapon& p, const int r, const int d, 
-		const int rate, object* const o);
+	weapon(object* const o, const weapons type);
 	~weapon();
 	void attack(object& o) noexcept;
 	void modificate(const modificated_parametrs a) noexcept;
 	bool recharge() noexcept;
 
-	const struct param_weapon param;	// параметры, загружаемые изначально
 private:
 	int decrease_ammunation() noexcept;
 
@@ -285,6 +282,4 @@ private:
 	int radius;				// радиус действия
 	int ammunation;			// боезапас
 	bool activate;			// флаг активации
-	int damage;				// наносимый урон
-	int rate;				// скорострельность
 };
