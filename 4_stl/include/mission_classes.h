@@ -11,21 +11,25 @@ enum states {
 };
 
 
-/*
-шаблон контейнерного класса
-*/
-template <typename T>
-class container
-{
-public:
-	container();
-	~container();
-	T& operator[](int index);
-	int length() { return this->length; };
-private:
-	T* array;
-	int length = 0;
+struct mode_mission { // парамеры миссии, загружаемые изначально, отвечают за режим игры
+	bool mode;			// рельное время или пошагово
+	int game_speed;		// темп игры
+	bool side;			// какая цель - нападение или защита
+	bool random;		// радномная карта (иначе - чистая)
 };
+
+struct param_mission { // парамеры миссии, загружаемые изначально
+	int money;					// количесвто денег, выдаваемое игрокам
+	int visibility;				// радиус видимости объектов
+	float difficult;			// уровень сложности
+	int goal;					// цель для победы (в сумме уничтоженного)
+	int max_ship;				// максимальное количество кораблей в одном флоте
+	std::pair<int, int> size;	// размер карты
+
+	// список всех возможных коммандиров
+	std::vector <std::pair<std::string, std::string>> list;
+};
+
 
 /*
 класс таблицы для хранения указателей на корабли, сортируются по позывным
@@ -42,10 +46,11 @@ public:
 		const struct param_ship& p_s, const bool a, const ships t,
 		std::pair<std::string, std::string>&& c, std::string&& n) noexcept;
 	bool find_ship(const std::string& s) const noexcept;
-	void del_ship(const ship& s);
-	void del_ship(const std::string& s);
+	void del_ship(const ship& s) noexcept;
+	void del_ship(const std::string& s) noexcept;
 	std::shared_ptr<ship> operator[](const std::string& s) noexcept;
 	std::shared_ptr<ship> operator[](const int n) noexcept;
+	int size() const { return conformity.size(); }
 
 private:
 	std::vector<std::string> conformity;
@@ -58,34 +63,27 @@ private:
 class mission
 {
 public:
-	mission();
+	mission(const struct mode_mission &m, const struct param_mission &p);
 	~mission();
-	const struct param_mission param;	// параметры миссии, загружаемы изначально
+	const struct param_mission param;	// параметры игры
+	const struct mode_mission mode;		// параметры для настройки режима игры
 
-	bool buy_ship(player& p);
-	void sell_ship(player& p);
-	bool buy_aircraft(player& p);
-	void sell_aircraft(player& p);
-	bool buy_weapons(ship& s);
-	bool sell_weapons(ship& s);
-	bool buy_ammunations(ship& s);
-	bool sell_ammunations(ship& s);
+	bool buy_or_sell(player& p);
 	bool transfer(aircraft& a, ship& s);
 	void finish();
-	void destroy(ship& s);
-	void destroy(aircraft& a);
+	void destroy(object& o);
 	bool modificate(object& o);
 	bool reached(ship& s);
 	void general_death(player& p);
+	void end_turn();
 
 protected:
-	int game_speed;		// темп игры
-	int visibility;		// радиус видимости объектов
+	int lenhtg_list;	// количесвто незанятых командиров
 	map	arena;			// игровая карта
-	// список всех возможных коммандиров
-	std::vector <std::pair<std::string, std::string>> list;
 	table ships1;		// таблица кораблей пользователя
 	table ships2;		// таблица кораблей бота
+	player p1;			// пользователь
+	player p2;			// бот
 };
 
 /*
@@ -94,10 +92,13 @@ protected:
 class player
 {
 public:
-	player();
-	~player();
-	friend class mission;
+	player() {};
+	player(std::pair<std::string, std::string> g, int m);
+	~player() {};
 	void set_general(std::pair<std::string, std::string>);
+	std::pair<std::string, std::string> get_general() const;
+	void increase_damage(const int a);
+
 protected:
 	int money;										// текущее количество денег
 	int costs;										// суммарно потрачено денег
@@ -106,29 +107,32 @@ protected:
 };
 
 /*
+класс одной клетки карты
+*/
+class cell
+{
+public:
+	cell(const int x, const int y);
+	~cell() {};
+	void set_state(const states s);
+
+private:
+	states state;						// состояние ячейки
+	const std::pair<int, int> coord;	// координаты ячейки
+};
+
+/*
 класс игровой карты
 */
 class map
 {
 public:
-	map();
-	~map();
+	map() {};
+	map(const std::pair<int, int>, bool);
+	~map() {};
+	map& operator=(map&& m);
 
 protected:
-	ptr<ptr<cell>> array;			// массив ячеек карты
-	const std::pair<int, int> size;	// размер карты
-};
-
-/*
-класс одной клетки карты
-*/
-class cell : public map
-{
-public:
-	cell();
-	~cell();
-	void set_state(const states s);
-private:
-	states state;						// состояние ячейки
-	const std::pair<int, int> coord;	// координаты ячейки
+	std::vector<std::vector<cell>> array;	// массив ячеек карты
+	const std::pair<int, int> size;			// размер карты
 };

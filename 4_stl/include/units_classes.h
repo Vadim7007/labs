@@ -38,17 +38,6 @@ enum modificated_parametrs {	// параметры, которые могут б
 };
 
 struct config {	// информация, загружаемая из конфигурационных файлов
-	// парамеры миссии
-	struct param_mission {
-		int difficult;	// уровень сложности
-		int goal;		// цель для победы (в сумме уничтоженного)
-		bool mode;		// рельное время или пошагово
-		int max_ship;	// максимальное количество кораблей в одном флоте
-		bool side;		// какая цель - нападение или защита
-	};
-
-	struct param_mission p_m;
-
 	// неизменяемые параметры оружия
 	struct const_param_weapon {
 		int max_ammunation;		// боезопас для оружия
@@ -79,19 +68,22 @@ struct config {	// информация, загружаемая из конфи�
 		int HP;		// максимальное количество прочности
 		int speed;	// скорость объекта
 		int range;	// дальность хода
-		int storage;	// ёмкость склада с боеприпасами
+		int storage;// ёмкость склада с боеприпасами
 	};
 
 	struct param_object p_o[3];
 
 	// параметры корабля, могут быть изменены
 	struct param_ship {
-		int max_weapon;	// максимальное количество оружия
+		int max_weapon;		// максимальное количество оружия
+		int max_aircraft;	// максимальное количество самолетов
+
 	};
 
 	struct param_ship p_s[3];
 };
 
+class weapon;
 
 /*
 виртуальный класс для кораблей и самолетов
@@ -100,31 +92,29 @@ class object
 {
 public:
 	object(const struct config& p, const bool a);
-	~object();
-	void destroyed();
-	bool move(const std::pair<int, int>);
-	virtual bool attack(aircraft& a) = 0;
-	virtual bool attack(ship& s) = 0;
+	~object() {};
+	virtual void attack(aircraft& a) = 0;
+	virtual void attack(ship& s) = 0;
 	void modificate(const modificated_parametrs);
-	bool recharge();
 	void set_coord(const std::pair<int, int>);
-
-	friend class weapon;
-
+	void correct();
 	friend int distance(const object& a, const object& b);
+	int get_cost() const;
+	void increase_cost(int a);
+
+	bool destroyed;			// флаг, означающий уничтожение корабля
+	bool activate;			// флаг активации объекта в данный момент
+	const bool affiliation;	// принадлежность пользователю
+	friend class weapon;
 
 protected:
 	virtual void download_arms(std::vector<std::vector<weapon>>& v) = 0;
-	void calculate_radius();	// вычисляет максимальную дальность атаки
-	void correct();
 
-	int radius;								// максимальная дальность атакаи
-	bool activate;							// флаг активации объекта в данный момент
+	int action;								// количесвто возможных действий
 	int hp;									// количество прочности
-	//std::vector<std::vector<weapon>> arms;	// набор оружия объекта КОСТЫЛЬ
+	std::vector<std::vector<weapon>> arms;	// набор оружия объекта
 	std::pair<int, int> currnet_coord;		// текущие координаты
 	std::pair<int, int> goal;				// целевые координаты (куда идет объект)
-	bool affiliation;						// принадлежность пользователю
 	int sum_costs;							// суммарная стоимость корабля
 	std::vector<int> ammo;					// боезапас по видам оружия
 	// параметры, определяемые при создании объекта
@@ -139,14 +129,19 @@ class ship: public object
 public:
 	ship(const struct config& p, const bool a, const ships t,
 		 std::pair<std::string, std::string>&& c, std::string&& n);
-	~ship();
-	std::vector<std::pair<int, int>> get_way(const std::pair<int, int>);
+	~ship() {};
 	std::string get_name() const;
+	std::pair<std::string, std::string> get_commander() const;
 	void set_bonus(const float f);
+	void attack(aircraft& a);
+	void attack(ship& s);
+	aircraft* use_air(aircrafts a);
 
 	const ships type;	// тип корабля	
 
 protected:
+	int max_aircraft;								// максимальное количество самолетов
+	std::vector<std::deque<aircraft>> own_aircrafts;// все самолеты
 	float bonus = 1;								// бонус за командира или его отсутствие
 	std::pair<std::string, std::string> commander;	// звание и имя капитана судна
 	std::string name;								// имя судна
@@ -164,10 +159,8 @@ public:
 	~aircraft();
 	void return_back();
 	void transfer(ship& s);
-	bool attack(aircraft& a);
-
-	std::vector<std::vector<weapon>> arms;	// набор оружия объекта КОСТЫЛЬ
-
+	void attack(aircraft& a);
+	void attack(ship& s);
 
 	const aircrafts type;	// тип самолета
 	const int refueling;	// время на заправку самолета
@@ -186,14 +179,10 @@ class air_cruiser: public ship
 public:
 	air_cruiser(const struct config& p, const bool a, const ships t,
 		const int m, std::pair<std::string, std::string>&& c, std::string&& n);
-	~air_cruiser();
+	~air_cruiser() {};
 
 private:
 	void download_arms(std::vector<std::vector<weapon>>& v);
-
-	int max_aircraft;					// максимальное количество самолетов
-	std::vector<aircraft> own_aircrafts;		// все самолеты
-	int aircrafts_count[2];	// количество самолетов по типам
 };
 
 /*
@@ -204,14 +193,10 @@ class air_carrier : public ship
 public:
 	air_carrier(const struct config& p, const bool a, const ships t,
 		const int m, std::pair<std::string, std::string>&& c, std::string&& n);
-	~air_carrier();
+	~air_carrier() {};
 
 private:
 	void download_arms(std::vector<std::vector<weapon>>& v);
-
-	int max_aircraft;					// максимальное количество самолетов
-	std::vector<aircraft> own_aircrafts;		// все самолеты
-	int aircrafts_count[3];	// количество самолетов по типам
 };
 
 /*
@@ -222,7 +207,7 @@ class cruiser : public ship
 public:
 	cruiser(const struct config& p, const bool a, const ships t,
 		std::pair<std::string, std::string>&& c, std::string&& n);
-	~cruiser();
+	~cruiser() {};
 private:
 	void download_arms(std::vector<std::vector<weapon>>& v);
 };
@@ -235,7 +220,7 @@ class fighter: public aircraft
 public:
 	fighter(const struct config& p, const bool a,
 		const aircrafts t, const int r, ship* const s);
-	~fighter();
+	~fighter() {};
 
 private:
 
@@ -249,7 +234,7 @@ class bomber : public aircraft
 public:
 	bomber(const struct config& p, const bool a,
 		const aircrafts t, const int r, ship* const s);
-	~bomber();
+	~bomber() {};
 
 private:
 
@@ -263,7 +248,7 @@ class front_bomber : public aircraft
 public:
 	front_bomber(const struct config& p, const bool a,
 		const aircrafts t, const int r, ship* const s);
-	~front_bomber();
+	~front_bomber() {};
 
 private:
 
@@ -288,5 +273,4 @@ private:
 
 	object* affilation_object;	// объект, которому оружие принадлежит
 	int ammunation;				// боезапас
-	bool activate;				// флаг активации
 };

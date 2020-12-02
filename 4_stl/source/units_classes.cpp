@@ -1,15 +1,74 @@
 ﻿#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/units_classes.h"
 
 
-object::object(const struct config& p, const bool affilation) noexcept {
+object::object(const struct config& p, const bool a) noexcept : affiliation(a) {
 	this->param = p;
-	this->activate = affilation;
+	this->activate = true;
 	this->currnet_coord = { 0, 0 };
 	this->goal = this->currnet_coord;
 	this->ammo[light] = 0;
 	this->ammo[middle] = 0;
 	this->ammo[heavy] = 0;
+	this->action = 3;
+	this->destroyed = false;
 };
+
+void object::correct() {
+	if (this->hp <= 0) {
+		this->hp = 0;
+		this->activate = false;
+		this->destroyed = true;
+	}
+}
+
+void object::modificate(const modificated_parametrs m){
+	if (m <= 5) {
+		switch (m)
+		{
+		case 0:
+			this->param.p_o->HP = round(this->param.p_o->HP * 1.1);
+			break;
+		case 1:
+			this->param.p_o->speed = round(this->param.p_o->speed * 1.1);
+			break;
+		case 2:
+			this->param.p_o->range = round(this->param.p_o->range * 1.1);
+			break;
+		case 3:
+			this->param.p_o->storage = round(this->param.p_o->storage * 1.1);
+			break;
+		case 4:
+			this->param.p_s->max_weapon = round(this->param.p_s->max_weapon * 1.1);
+			break;
+		case 5:
+			this->param.p_s->max_aircraft = round(this->param.p_s->max_aircraft * 1.1);
+			break;
+		default:
+			break;
+		}
+	}
+	else if (m <= 8) {
+		for (int i = 0; i < this->arms.size(); i++)
+		{
+			for (int j = 0; j < this->arms[i].size(); j++)
+			{
+				this->arms[i][j].modificate(m);
+			}
+		}
+	}
+}
+
+void object::set_coord(const std::pair<int, int> a) {
+	this->goal = a;
+}
+
+int object::get_cost() const{
+	return this->sum_costs;
+}
+
+void object::increase_cost(int a){
+	if (a > 0) { this->sum_costs += a; }
+}
 
 void ship::set_bonus(const float f) {
 	this->bonus = f;
@@ -36,14 +95,68 @@ ship::ship(const struct config& p, const bool a, const ships t,
 	this->hp = p.p_o[type].HP;
 };
 
-bool ship::attack(object& a) {
-	if (this->radius < distance(*this, a)) {
-		return false;
-	}
+std::string ship::get_name() const {
+	return this->name;
+};
 
+std::pair<std::string, std::string> ship::get_commander() const {
+	return this->commander;
+};
+
+void ship::attack(ship& s) {
+	if (this->activate && this->action >= 2 && 
+		this->affiliation != s.affiliation) {
+
+		bool flag = false;
+		for (int i = 1; i < 3; i++)
+		{
+			if (distance(*this, s) <= this->param.p_w[i].radius) {
+				for (int j = 0; j < this->arms[i].size(); j++)
+				{
+					this->arms[i][j].attack(s);
+					flag = true;
+				}
+			}
+		}
+		if (flag) {
+			this->action -= 2;
+			s.correct();
+		}
+	}
+	return;
 }
 
+void ship::attack(aircraft& a) {
+	if (this->activate && this->action >= 2 &&
+		this->affiliation != a.affiliation) {
 
+		bool flag = false;
+		if (distance(*this, a) <= this->param.p_w[light].radius) {
+			for (int j = 0; j < this->arms[light].size(); j++)
+			{
+				this->arms[light][j].attack(a);
+				flag = true;
+			}
+		}
+		if (flag) {
+			this->action -= 1;
+			a.correct();
+		}
+	}
+	return;
+}
+
+// в случае ошибки возвращает nullptr
+aircraft* ship::use_air(aircrafts a) {
+	if (this->own_aircrafts.size() <= a) {
+		if (!this->own_aircrafts[a].empty()) {
+			auto i = std::move(this->own_aircrafts[a][0]);
+			this->own_aircrafts[a].pop_front();
+			return &i;
+		}
+	}	
+	return nullptr;
+}
 
 aircraft::aircraft(const struct config& p, const bool a,
 				   const aircrafts t, const int r, ship* const s) 
@@ -53,12 +166,44 @@ aircraft::aircraft(const struct config& p, const bool a,
 	this->hp = p.p_o[type].HP;
 };
 
-bool aircraft::attack(aircraft& a) {
-	for (int i = 0; i < this->arms[light].size(); i++)
-	{
-		if activate
-		this->arms[light][i].attack(a);
+void aircraft::attack(aircraft& a) {
+	if (this->activate && this->action >= 2 &&
+		this->affiliation != a.affiliation) {
+
+		int i;
+		if (distance(*this, a) <= this->param.p_w[light].radius) {
+			for (i = 0; i < this->arms[light].size(); i++)
+			{
+				this->arms[light][i].attack(a);
+			}
+			if (!i) {
+				return;
+			}
+			this->action -= 2;
+			a.correct();
+		}
 	}
+	return;
+}
+
+void aircraft::attack(ship& s) {
+	if (this->activate && this->action >= 2 &&
+		this->affiliation != s.affiliation) {
+
+		int i;
+		if (distance(*this, s) <= this->param.p_w[middle].radius) {
+			for (i = 0; i < this->arms[middle].size(); i++)
+			{
+				this->arms[middle][i].attack(s);
+			}
+			if (!i) {
+				return;
+			}
+			s.correct();
+			this->action -= 2;
+		}
+	}
+	return;
 }
 
 air_cruiser::air_cruiser(const struct config& p, const bool a, const ships t,
@@ -66,10 +211,6 @@ air_cruiser::air_cruiser(const struct config& p, const bool a, const ships t,
 	: ship(p, a, t, std::move(c), std::move(n)) {
 	
 	this->download_arms(this->arms);
-	calculate_radius();
-	this->max_aircraft = m;
-	this->aircrafts_count[fighter] = 0;
-	this->aircrafts_count[front_bomber] = 0;
 }
 
 void air_cruiser::download_arms(std::vector<std::vector<weapon>>& v) {
@@ -84,11 +225,6 @@ air_carrier::air_carrier(const struct config& p, const bool a, const ships t,
 	: ship(p, a, t, std::move(c), std::move(n)) {
 	
 	this->download_arms(this->arms);
-	calculate_radius();
-	this->max_aircraft = m;
-	this->aircrafts_count[fighter] = 0;
-	this->aircrafts_count[front_bomber] = 0;
-	this->aircrafts_count[bomber] = 0;
 }
 
 void air_carrier::download_arms(std::vector<std::vector<weapon>>& v) {
@@ -101,7 +237,6 @@ cruiser::cruiser(const struct config& p, const bool a, const ships t,
 	: ship(p, a, t, std::move(c), std::move(n)) {
 
 	this->download_arms(this->arms);
-	calculate_radius();
 }
 
 void cruiser::download_arms(std::vector<std::vector<weapon>>& v) {
@@ -133,7 +268,6 @@ bomber::bomber(const struct config& p, const bool a,
 
 weapon::weapon(object* const o, const weapons t) : type(t) {
 	this->affilation_object = o;
-	this->activate = true;
 	this->ammunation = 
 		this->affilation_object->param.c_p_w[this->type].max_ammunation;
 	return;
@@ -147,7 +281,6 @@ void weapon::attack(object& o) {
 	int d = k * (this->affilation_object->param.p_w[this->type].damage);
 	// урон по обьекту
 	o.hp -= d;
-	o.correct();
 	return;
 }
 
@@ -164,7 +297,6 @@ int weapon::decrease_ammunation() {
 		else {
 			int k = this->ammunation;
 			this->ammunation = 0;
-			this->activate = false;
 			return k;
 		}
 	}

@@ -1,5 +1,51 @@
 ﻿#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/mission_classes.h"
 
+mission::mission(const struct mode_mission& m, const struct param_mission& p)
+	: param(p), mode(m), arena(p.size, m.random) {
+	this->lenhtg_list = this->param.list.size() - 2;
+	this->p1 = player(p.list[this->lenhtg_list + 1], round(p.money / p.difficult));
+	this->p2 = player(p.list[this->lenhtg_list ], round(p.money * p.difficult));
+}
+
+bool mission::buy_or_sell(player& p) {
+	bool buy_ship(player & p);
+	void sell_ship(player & p);
+	bool buy_aircraft(player & p);
+	void sell_aircraft(player & p);
+	bool buy_weapons(ship & s);
+	bool sell_weapons(ship & s);
+	bool buy_ammunations(ship & s);
+	bool sell_ammunations(ship & s);
+}
+
+void mission::end_turn() {
+	// проверка всех кораблей
+	for (int i = 0; i < ships1.size(); i++)
+	{
+		ships1[i]->correct();
+		if (ships1[i]->destroyed) {
+			if(ships1[i]->get_commander() == this->p1.get_general()){
+				this->general_death(p1);
+			}
+			this->p2.increase_damage(ships1[i]->get_cost());
+			ships1.del_ship(ships1[i]->get_name());
+		}
+	}
+	for (int i = 0; i < ships2.size(); i++)
+	{
+		ships2[i]->correct();
+		if (ships2[i]->destroyed) {
+			if (ships2[i]->get_commander() == this->p2.get_general()) {
+				this->general_death(p2);
+			}
+			this->p1.increase_damage(ships2[i]->get_cost());
+			ships2.del_ship(ships2[i]->get_name());
+		}
+	}
+
+
+}
+
 /*
 метод извлечения ссылки на обьект по позывному. Если ссылки по этому ключу
 не существует, добавляет nullptr с таким ключом и его возвращает
@@ -60,4 +106,60 @@ std::shared_ptr<ship> table::operator[](const int n) {
 		return nullptr;
 	}
 	return this->get_ship(s);
+}
+
+player::player(std::pair<std::string, std::string> g, int m) {
+	this->costs = 0;
+	this->damage = 0;
+	this->general = g;
+	this->money = m;
+}
+
+void player::set_general(std::pair<std::string, std::string> g) {
+	this->general = g;
+}
+
+std::pair<std::string, std::string> player::get_general() const {
+	return this->general;
+}
+
+void player::increase_damage(const int a) {
+	if (a>=0) this->damage += a;
+	return;
+}
+
+map::map(const std::pair<int, int> s, bool random = false){
+	if (random)
+	{
+		for (int i = 0; i < s.first; i++)
+		{
+			std::vector<cell> v;
+			for (int j = 0; i < s.second; i++)
+			{
+				cell c = { i, j };
+				if (mine::random(10) > 6) c.set_state(ground);
+				v.push_back(c);
+			}
+			this->array.push_back(v);
+		}
+	}
+	else {
+		for (int i = 0; i < s.first; i++)
+		{
+			std::vector<cell> v;
+			for (int j = 0; i < s.second; i++)
+			{
+				v.push_back({i, j});
+			}
+			this->array.push_back(v);
+		}
+	}
+}
+
+cell::cell(const int x, const int y) : coord({x, y}) {
+	this->state = free_st;
+}
+
+void cell::set_state(const states s) {
+	this->state = s;
 }
