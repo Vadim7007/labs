@@ -100,15 +100,15 @@ class weapon;
 class object
 {
 public:
-	object(const struct config& p, const bool a);
+	object(const struct config& p, const bool a) noexcept;
 	~object() {};
 	virtual void attack(aircraft& a) = 0;
 	virtual void attack(ship& s) = 0;
-	void modificate(const modificated_parametrs);
-	void set_coord(const std::pair<int, int>);
+	void modificate(const modificated_parametrs& m) noexcept;
+	void set_coord(const std::pair<int, int>& p) noexcept;
 	friend int distance(const object& a, const object& b);
-	int get_cost() const;
-	void increase_cost(int a);
+	int get_cost() const noexcept;
+	void increase_cost(const int a) noexcept;
 	virtual void recovery() = 0;
 	virtual bool correct() = 0;
 
@@ -138,11 +138,11 @@ class ship: public object
 {
 public:
 	ship(const struct config& p, const bool a, const ships t,
-		 std::pair<std::string, std::string>&& c, std::string&& n);
+		 std::pair<std::string, std::string>&& c, std::string&& n) noexcept;
 	~ship() {};
-	std::string get_name() const;
-	std::pair<std::string, std::string> get_commander() const;
-	void set_bonus(const float f);
+	std::string get_name() const noexcept;
+	std::pair<std::string, std::string> get_commander() const noexcept;
+	void set_bonus(const float f) noexcept;
 	void attack(aircraft& a);
 	void attack(ship& s);
 	aircraft* use_air(aircrafts a);

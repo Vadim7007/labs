@@ -13,7 +13,7 @@ object::object(const struct config& p, const bool a) noexcept : affiliation(a) {
 };
 
 // ERROR
-void object::modificate(const modificated_parametrs m){
+void object::modificate(const modificated_parametrs& m) noexcept{
 	if (m <= 5) {
 		switch (m)
 		{
@@ -50,15 +50,15 @@ void object::modificate(const modificated_parametrs m){
 	}
 }
 
-void object::set_coord(const std::pair<int, int> a) {
+void object::set_coord(const std::pair<int, int>& a) noexcept {
 	this->goal = a;
 }
 
-int object::get_cost() const{
+int object::get_cost() const noexcept {
 	return this->sum_costs;
 }
 
-void object::increase_cost(int a){
+void object::increase_cost(const int a) noexcept {
 	if (a > 0) { this->sum_costs += a; }
 }
 
@@ -98,7 +98,7 @@ void ship::recovery() {
 	}
 }
 
-void ship::set_bonus(const float f) {
+void ship::set_bonus(const float f) noexcept {
 	this->bonus = f;
 	this->param.p_o[this->type].HP *= f;
 	this->param.p_o[this->type].range *= f;
@@ -123,11 +123,11 @@ ship::ship(const struct config& p, const bool a, const ships t,
 	this->hp = p.p_o[type].HP;
 };
 
-std::string ship::get_name() const {
+std::string ship::get_name() const noexcept {
 	return this->name;
 };
 
-std::pair<std::string, std::string> ship::get_commander() const {
+std::pair<std::string, std::string> ship::get_commander() const noexcept {
 	return this->commander;
 };
 
