@@ -33,9 +33,8 @@ bool mission::end_turn() {
 			}
 			this->p2.increase_damage(ships1[i]->get_cost());
 			ships1.del_ship(ships1[i]->get_name());
+			continue;
 		}
-		// восстановить активность
-		ships1[i]->recovery();
 	}
 	k = ships2.size();
 	for (int i = 0; i < k; i++)
@@ -47,16 +46,29 @@ bool mission::end_turn() {
 			}
 			this->p1.increase_damage(ships2[i]->get_cost());
 			ships2.del_ship(ships2[i]->get_name());
+			continue;
 		}
-		ships2[i]->recovery();
 	}
 
 	// если кораблей где-то не осталось
 	if (!ships1.size() || !ships2.size()) {
 		return true;
 	}
-	
 
+	// восстановление всех кораблей
+	k = ships1.size();
+	for (int i = 0; i < k; i++)
+	{
+		// восстановить активность
+		ships1[i]->recovery();
+	}
+	k = ships2.size();
+	for (int i = 0; i < k; i++)
+	{
+		ships2[i]->recovery();
+	}
+
+	return false;
 }
 
 /*

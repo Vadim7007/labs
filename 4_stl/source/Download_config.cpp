@@ -19,19 +19,19 @@ bool download_info(config& c, param_mission& p, mode_mission& m) {
 	p0.visibility = 10;
 	p0.list = { {"Ivan Petrov", "major"}, {"Nikita Ivanov", "captain"},
 		{"Petr Nikitin", "admiral"}, {"Danil Saturday", "sergant"},
-		{"Saturday Danilin", "lieutenant"},{"Ivan Petrov", "major"},
-		{"Nikita Ivanov", "captain"}, {"Petr Nikitin", "admiral"}, 
-		{"Danil Saturday", "sergant"},	{"Saturday Danilin", "lieutenant"}, 
-		{"Ivan Petrov", "major"}, {"Nikita Ivanov", "captain"},
-		{"Petr Nikitin", "admiral"}, {"Danil Saturday", "sergant"},
-		{"Saturday Danilin", "lieutenant"},{"Ivan Petrov", "major"}, 
-		{"Nikita Ivanov", "captain"}, {"Petr Nikitin", "admiral"},
-		{"Danil Saturday", "sergant"}, {"Saturday Danilin", "lieutenant"}, 
-		{"Ivan Petrov", "major"}, {"Nikita Ivanov", "captain"}, 
-		{"Petr Nikitin", "admiral"}, {"Danil Saturday", "sergant"},
-		{"Saturday Danilin", "lieutenant"},{"Ivan Petrov", "major"}, 
-		{"Nikita Ivanov", "captain"}, {"Petr Nikitin", "admiral"}, 
-		{"Danil Saturday", "sergant"}, {"Saturday Danilin", "lieutenant"} 
+		{"Saturday Danilin", "lieutenant"},{"Ivan Ivanov", "major"},
+		{"Nikita Petrov", "captain"}, {"Petr Ivanov", "admiral"}, 
+		{"Danil Ivanov", "sergant"},	{"Saturday Ivanov", "lieutenant"}, 
+		{"Ivan Nikitin", "major"}, {"Nikita Petrov", "captain"},
+		{"Petr Petrov", "admiral"}, {"Danil Petrov", "sergant"},
+		{"Saturday Petrov", "lieutenant"}, {"Ivan Nikitin", "major"}, 
+		{"Nikita Nikitin", "captain"}, {"Petr Danilin", "admiral"},
+		{"Danil Nikitin", "sergant"}, {"Saturday Nikitin", "lieutenant"}, 
+		{"Ivan Danilin", "major"}, {"Nikita Danilin", "captain"}, 
+		{"Petr Danilin", "admiral"}, {"Danil Danilin", "sergant"},
+		{"Vadim Danilin", "lieutenant"},{"Dmitry Petrov", "major"}, 
+		{"Dmitry Ivanov", "captain"}, {"Dmitry Nikitin", "admiral"}, 
+		{"Dmitry Withoutsurname", "sergant"}, {"Dmitry Danilin", "lieutenant"} 
 	};
 
 	// ошибка в данных
@@ -50,7 +50,7 @@ bool download_info(config& c, param_mission& p, mode_mission& m) {
 	c0.p_o[0].speed = 4;
 	c0.p_o[1].speed = 3;
 	c0.p_o[2].speed = 2;
-	c0.p_o[0].storage = ;
-	c0.p_o[0].storage = ;
-	c0.p_o[0].storage = ;
+	c0.p_o[0].storage = 150;
+	c0.p_o[1].storage = 300;
+	c0.p_o[2].storage = 400;
 }

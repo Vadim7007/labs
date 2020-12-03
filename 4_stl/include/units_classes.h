@@ -110,7 +110,7 @@ public:
 	int get_cost() const;
 	void increase_cost(int a);
 	virtual void recovery() = 0;
-	virtual void correct() = 0;
+	virtual bool correct() = 0;
 
 	bool destroyed;			// флаг, означающий уничтожение корабля
 	bool activate;			// флаг активации объекта в данный момент
@@ -147,7 +147,7 @@ public:
 	void attack(ship& s);
 	aircraft* use_air(aircrafts a);
 	void recovery();
-	void correct();
+	bool correct();
 
 	const ships type;	// тип корабля	
 
@@ -174,7 +174,7 @@ public:
 	void attack(aircraft& a);
 	void attack(ship& s);
 	void recovery();
-	void correct();
+	bool correct();
 
 	const aircrafts type;	// тип самолета
 	const int refueling;	// время на заправку самолета

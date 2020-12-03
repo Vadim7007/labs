@@ -1,8 +1,5 @@
 ﻿#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/units_classes.h"
 
-// для самолетов не те данные, которые берутся из параметров объекта
-
-
 object::object(const struct config& p, const bool a) noexcept : affiliation(a) {
 	this->param = p;
 	this->activate = true;
@@ -65,7 +62,7 @@ void object::increase_cost(int a){
 	if (a > 0) { this->sum_costs += a; }
 }
 
-void ship::correct() {
+bool ship::correct() {
 	// для корабля
 	if (this->hp <= 0) {
 		this->hp = 0;
@@ -78,12 +75,14 @@ void ship::correct() {
 	{
 		for (int j = 0; j < this->own_aircrafts[i].size(); j++)
 		{
-			this->own_aircrafts[i][j].correct();
+			bool be = this->own_aircrafts[i][j].correct();
+			if (!be) {
+				this->own_aircrafts[i].erase(this->own_aircrafts[i].begin() + j);
+			}
 		}
 	}
 }
 
-// доделать
 void ship::recovery() {
 	// для корабля
 	this->action = 3;
@@ -94,7 +93,7 @@ void ship::recovery() {
 	{
 		for (int j = 0; j < this->own_aircrafts[i].size(); j++)
 		{
-			this->own_aircrafts[i][j].correct();
+			this->own_aircrafts[i][j].recovery();
 		}
 	}
 }
@@ -200,18 +199,18 @@ aircraft::aircraft(const struct config& p, const bool a,
 	this->hp = this->param.p_o[type].HP;
 };
 
-// доделать
-void aircraft::correct() {
+bool aircraft::correct() {
 	if (this->hp <= 0) {
 		this->hp = 0;
 		this->activate = false;
 		this->destroyed = true;
+		return false;
 	}
 }
 
-// доделать
 void aircraft::recovery() {
-
+	this->action = 3;
+	this->hp += this->param.p_o[this->type].HP / 20;
 }
 
 void aircraft::attack(aircraft& a) {

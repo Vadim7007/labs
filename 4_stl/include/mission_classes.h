@@ -77,7 +77,6 @@ public:
 	void general_death(player& p);
 	// возвращает true, если игра завершена
 	bool end_turn();
-	void win();
 
 protected:
 	int lenhtg_list;	// количесвто незанятых командиров
