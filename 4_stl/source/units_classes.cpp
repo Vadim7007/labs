@@ -1,5 +1,7 @@
 ﻿#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/units_classes.h"
 
+// для самолетов не те данные, которые берутся из параметров объекта
+
 
 object::object(const struct config& p, const bool a) noexcept : affiliation(a) {
 	this->param = p;
@@ -13,14 +15,7 @@ object::object(const struct config& p, const bool a) noexcept : affiliation(a) {
 	this->destroyed = false;
 };
 
-void object::correct() {
-	if (this->hp <= 0) {
-		this->hp = 0;
-		this->activate = false;
-		this->destroyed = true;
-	}
-}
-
+// ERROR
 void object::modificate(const modificated_parametrs m){
 	if (m <= 5) {
 		switch (m)
@@ -68,6 +63,40 @@ int object::get_cost() const{
 
 void object::increase_cost(int a){
 	if (a > 0) { this->sum_costs += a; }
+}
+
+void ship::correct() {
+	// для корабля
+	if (this->hp <= 0) {
+		this->hp = 0;
+		this->activate = false;
+		this->destroyed = true;
+	}
+
+	// для его самолетов
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < this->own_aircrafts[i].size(); j++)
+		{
+			this->own_aircrafts[i][j].correct();
+		}
+	}
+}
+
+// доделать
+void ship::recovery() {
+	// для корабля
+	this->action = 3;
+	this->hp += this->param.p_o[this->type].HP / 20;
+
+	// для его самолетов
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < this->own_aircrafts[i].size(); j++)
+		{
+			this->own_aircrafts[i][j].correct();
+		}
+	}
 }
 
 void ship::set_bonus(const float f) {
@@ -162,9 +191,28 @@ aircraft::aircraft(const struct config& p, const bool a,
 				   const aircrafts t, const int r, ship* const s) 
 	: object(p, a), type(t), refueling(r) {
 	this->affiliation_ship = s;
-	this->sum_costs = p.c_p_o[type].cost;
-	this->hp = p.p_o[type].HP;
+	this->sum_costs = round( 10 * sqrt(p.c_p_o[type].cost));
+	this->param.p_o[type].HP = round(7 * sqrt(this->param.p_o[type].HP));
+	this->param.p_o[type].range = 3*this->param.p_o[0].range;
+	this->param.p_o[type].speed = 3*this->param.p_o[type].speed;
+	this->param.p_o[type].storage = 0;
+
+	this->hp = this->param.p_o[type].HP;
 };
+
+// доделать
+void aircraft::correct() {
+	if (this->hp <= 0) {
+		this->hp = 0;
+		this->activate = false;
+		this->destroyed = true;
+	}
+}
+
+// доделать
+void aircraft::recovery() {
+
+}
 
 void aircraft::attack(aircraft& a) {
 	if (this->activate && this->action >= 2 &&

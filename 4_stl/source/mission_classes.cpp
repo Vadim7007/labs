@@ -18,11 +18,15 @@ bool mission::buy_or_sell(player& p) {
 	bool sell_ammunations(ship & s);
 }
 
-void mission::end_turn() {
+bool mission::end_turn() {
 	// проверка всех кораблей
-	for (int i = 0; i < ships1.size(); i++)
+	int k = ships1.size();
+	for (int i = 0; i < k; i++)
 	{
+		// откорректировать данные
 		ships1[i]->correct();
+
+		// проверить на уничтожение
 		if (ships1[i]->destroyed) {
 			if(ships1[i]->get_commander() == this->p1.get_general()){
 				this->general_death(p1);
@@ -30,8 +34,11 @@ void mission::end_turn() {
 			this->p2.increase_damage(ships1[i]->get_cost());
 			ships1.del_ship(ships1[i]->get_name());
 		}
+		// восстановить активность
+		ships1[i]->recovery();
 	}
-	for (int i = 0; i < ships2.size(); i++)
+	k = ships2.size();
+	for (int i = 0; i < k; i++)
 	{
 		ships2[i]->correct();
 		if (ships2[i]->destroyed) {
@@ -41,8 +48,14 @@ void mission::end_turn() {
 			this->p1.increase_damage(ships2[i]->get_cost());
 			ships2.del_ship(ships2[i]->get_name());
 		}
+		ships2[i]->recovery();
 	}
 
+	// если кораблей где-то не осталось
+	if (!ships1.size() || !ships2.size()) {
+		return true;
+	}
+	
 
 }
 

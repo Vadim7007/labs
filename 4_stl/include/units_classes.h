@@ -5,25 +5,28 @@
 
 
 enum ships
-{
+{	// виды кораблей
 	cruiser,
 	aircraft_carrier_cruiser,
 	aircraft_carrier
 };
 
 enum aircrafts {
+	// виды самолетов
 	fighter,
 	front_bomber,
 	bomber
 };
 
 enum weapons {
+	// виды вооружения
 	light,
 	middle,
 	heavy
 };
 
-enum modificated_parametrs {	// параметры, которые могут быть модифицированы
+enum modificated_parametrs {	
+	// параметры, которые могут быть модифицированы
 	// для объектво 0 - 5
 	HP,				// живучесть
 	speed,			// скорость
@@ -37,7 +40,9 @@ enum modificated_parametrs {	// параметры, которые могут б
 	Rate,			// скорострельность
 };
 
-struct config {	// информация, загружаемая из конфигурационных файлов
+struct config {	
+	// информация, загружаемая из конфигурационных файлов
+	
 	// неизменяемые параметры оружия
 	struct const_param_weapon {
 		int max_ammunation;		// боезопас для оружия
@@ -55,13 +60,17 @@ struct config {	// информация, загружаемая из конфи�
 
 	param_weapon p_w[3];
 
+	/*
+	параметры объектов присваиваются кораблям
+	самолетам они присваиваются с коэффицентом
+	*/
+
 	// неизменняемые параметры объекта, присваиваются при инциализации
 	struct const_param_object {
 		int cost;		// стоимость объекта
 	};
 
 	const_param_object c_p_o[3];
-
 
 	// параметры объекта, которые могут быть изменены
 	struct param_object {
@@ -97,10 +106,11 @@ public:
 	virtual void attack(ship& s) = 0;
 	void modificate(const modificated_parametrs);
 	void set_coord(const std::pair<int, int>);
-	void correct();
 	friend int distance(const object& a, const object& b);
 	int get_cost() const;
 	void increase_cost(int a);
+	virtual void recovery() = 0;
+	virtual void correct() = 0;
 
 	bool destroyed;			// флаг, означающий уничтожение корабля
 	bool activate;			// флаг активации объекта в данный момент
@@ -136,6 +146,8 @@ public:
 	void attack(aircraft& a);
 	void attack(ship& s);
 	aircraft* use_air(aircrafts a);
+	void recovery();
+	void correct();
 
 	const ships type;	// тип корабля	
 
@@ -161,6 +173,8 @@ public:
 	void transfer(ship& s);
 	void attack(aircraft& a);
 	void attack(ship& s);
+	void recovery();
+	void correct();
 
 	const aircrafts type;	// тип самолета
 	const int refueling;	// время на заправку самолета

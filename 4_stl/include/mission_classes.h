@@ -12,9 +12,9 @@ enum states {
 
 
 struct mode_mission { // парамеры миссии, загружаемые изначально, отвечают за режим игры
-	bool mode;			// рельное время или пошагово
+	bool mode;			// режим рельного времени (иначе пошагово)
 	int game_speed;		// темп игры
-	bool side;			// какая цель - нападение или защита
+	bool side;			// цель для пользователя - нападение (иначе - защита)
 	bool random;		// радномная карта (иначе - чистая)
 };
 
@@ -75,7 +75,9 @@ public:
 	bool modificate(object& o);
 	bool reached(ship& s);
 	void general_death(player& p);
-	void end_turn();
+	// возвращает true, если игра завершена
+	bool end_turn();
+	void win();
 
 protected:
 	int lenhtg_list;	// количесвто незанятых командиров
