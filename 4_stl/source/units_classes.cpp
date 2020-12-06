@@ -12,28 +12,39 @@ object::object(const struct config& p, const bool a) noexcept : affiliation(a) {
 	this->destroyed = false;
 };
 
-// ERROR
 void object::modificate(const modificated_parametrs& m) noexcept{
 	if (m <= 5) {
 		switch (m)
 		{
 		case 0:
-			this->param.p_o->HP = round(this->param.p_o->HP * 1.1);
+			this->param.p_o[0].HP = round(this->param.p_o[0].HP * 1.1);
+			this->param.p_o[1].HP = round(this->param.p_o[1].HP * 1.1);
+			this->param.p_o[2].HP = round(this->param.p_o[2].HP * 1.1);
 			break;
 		case 1:
-			this->param.p_o->speed = round(this->param.p_o->speed * 1.1);
+			this->param.p_o[0].speed = round(this->param.p_o[0].speed * 1.1);
+			this->param.p_o[1].speed = round(this->param.p_o[1].speed * 1.1);
+			this->param.p_o[2].speed = round(this->param.p_o[2].speed * 1.1);
 			break;
 		case 2:
-			this->param.p_o->range = round(this->param.p_o->range * 1.1);
+			this->param.p_o[0].range = round(this->param.p_o[0].range * 1.1);
+			this->param.p_o[1].range = round(this->param.p_o[1].range * 1.1);
+			this->param.p_o[2].range = round(this->param.p_o[2].range * 1.1);
 			break;
 		case 3:
-			this->param.p_o->storage = round(this->param.p_o->storage * 1.1);
+			this->param.p_o[0].storage = round(this->param.p_o[0].storage * 1.1);
+			this->param.p_o[1].storage = round(this->param.p_o[1].storage * 1.1);
+			this->param.p_o[2].storage = round(this->param.p_o[2].storage * 1.1);
 			break;
 		case 4:
-			this->param.p_s->max_weapon = round(this->param.p_s->max_weapon * 1.1);
+			this->param.p_s[0].max_weapon = round(this->param.p_s[0].max_weapon * 1.1);
+			this->param.p_s[1].max_weapon = round(this->param.p_s[1].max_weapon * 1.1);
+			this->param.p_s[2].max_weapon = round(this->param.p_s[2].max_weapon * 1.1);
 			break;
 		case 5:
-			this->param.p_s->max_aircraft = round(this->param.p_s->max_aircraft * 1.1);
+			this->param.p_s[0].max_aircraft = round(this->param.p_s[0].max_aircraft * 1.1);
+			this->param.p_s[1].max_aircraft = round(this->param.p_s[1].max_aircraft * 1.1);
+			this->param.p_s[2].max_aircraft = round(this->param.p_s[2].max_aircraft * 1.1);
 			break;
 		default:
 			break;
