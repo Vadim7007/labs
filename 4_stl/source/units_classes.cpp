@@ -73,6 +73,10 @@ void object::increase_cost(const int a) noexcept {
 	if (a > 0) { this->sum_costs += a; }
 }
 
+std::pair<int, int> object::get_coord() const noexcept {
+	return this->currnet_coord;
+}
+
 bool ship::correct() {
 	// для корабля
 	if (this->hp <= 0) {
@@ -197,6 +201,40 @@ aircraft* ship::use_air(aircrafts a) {
 	return nullptr;
 }
 
+// убирает из списка самолетов этого корабля самолет с указателем "a"
+void ship::remove(aircraft* a) {
+	int size = this->own_aircrafts[a->type].size();
+	int i;
+	for (i = 0; i < size; i++)
+	{
+		if (&this->own_aircrafts[a->type][i] == a) {
+			break;
+		}
+	}
+	if (i == size) {
+		throw std::exception("Such element is upsent");
+	}
+	this->own_aircrafts[a->type].erase(this->own_aircrafts[a->type].begin() + i);
+}
+
+// возвращает true, если есть свободое место для корабля
+bool ship::get_max_a() {
+	int a = this->param.p_s[this->type].max_aircraft;
+	int b = 0;
+	for (int i = 0; i < this->own_aircrafts.size(); i++)
+	{
+		for (int j = 0; j < this->own_aircrafts[i].size(); j++)
+		{
+			b++;
+		}
+	}
+	return a > b;
+}
+
+void ship::add_aircraft(aircraft* a) {
+	this->own_aircrafts[a->type].push_back(*a);
+}
+
 aircraft::aircraft(const struct config& p, const bool a,
 				   const aircrafts t, const int r, ship* const s) 
 	: object(p, a), type(t), refueling(r) {
@@ -264,6 +302,19 @@ void aircraft::attack(ship& s) {
 	return;
 }
 
+void aircraft::transfer(ship& s) {
+	if (s.get_max_a())
+	{
+		this->affiliation_ship->remove(this);
+		s.add_aircraft(this);
+		this->affiliation_ship = &s;
+	}
+}
+
+void aircraft::return_back() {
+	this->goal = this->affiliation_ship->get_coord();
+}
+
 air_cruiser::air_cruiser(const struct config& p, const bool a, const ships t,
 	const int m, std::pair<std::string, std::string>&& c, std::string&& n)
 	: ship(p, a, t, std::move(c), std::move(n)) {
@@ -309,19 +360,24 @@ void cruiser::download_arms(std::vector<std::vector<weapon>>& v) {
 fighter::fighter(const struct config& p, const bool a,
 	const aircrafts t, const int r, ship* const s)
 	: aircraft(p, a, t, r, s) {
-
+	std::vector<weapon> l{ {this, light}, {this, light} };
+	this->arms.push_back(l);
 }
 
 front_bomber::front_bomber(const struct config& p, const bool a,
 	const aircrafts t, const int r, ship* const s)
 	: aircraft(p, a, t, r, s) {
-
+	std::vector<weapon> l{ {this, light} };
+	std::vector<weapon> m{ {this, middle} };
+	this->arms.push_back(l);
+	this->arms.push_back(m);
 }
 
 bomber::bomber(const struct config& p, const bool a,
 	const aircrafts t, const int r, ship* const s)
 	: aircraft(p, a, t, r, s) {
-
+	std::vector<weapon> m{ {this, middle}, {this, middle} };
+	this->arms.push_back(m);
 }
 
 weapon::weapon(object* const o, const weapons t) : type(t) {

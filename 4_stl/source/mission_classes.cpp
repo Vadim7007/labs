@@ -3,8 +3,8 @@
 mission::mission(const struct mode_mission& m, const struct param_mission& p)
 	: param(p), mode(m), arena(p.size, m.random) {
 	this->lenhtg_list = this->param.list.size() - 2;
-	this->p1 = player(p.list[this->lenhtg_list + 1], round(p.money / p.difficult));
-	this->p2 = player(p.list[this->lenhtg_list ], round(p.money * p.difficult));
+	this->p1 = player(p.list[this->lenhtg_list + 1], round(p.money / p.difficult), true);
+	this->p2 = player(p.list[this->lenhtg_list ], round(p.money * p.difficult), false);
 }
 
 bool mission::buy_or_sell(player& p) {
@@ -71,6 +71,30 @@ bool mission::end_turn() {
 	return false;
 }
 
+bool mission::transfer(aircraft& a, ship& s) {
+	if (s.type != cruiser)
+	{
+		a.transfer(s);
+	}
+}
+
+void mission::general_death(player& p) {
+	if (p.affilation)
+	{
+		for (int i = 0; i < this->ships1.size(); i++)
+		{
+			ships1[i]->set_bonus(0.9* sqrt(1 / this->param.difficult));
+		}
+	}
+	else {
+		for (int i = 0; i < this->ships2.size(); i++)
+		{
+			ships2[i]->set_bonus(0.9 * sqrt(1 / this->param.difficult));
+		}
+	}
+	p.set_general({ "Admiral died", p.get_general().second });
+}
+
 /*
 метод извлечения ссылки на обьект по позывному. Если ссылки по этому ключу
 не существует, добавляет nullptr с таким ключом и его возвращает
@@ -133,11 +157,12 @@ std::shared_ptr<ship> table::operator[](const int n) {
 	return this->get_ship(s);
 }
 
-player::player(std::pair<std::string, std::string> g, int m) {
+player::player(std::pair<std::string, std::string> g, int m, bool a) {
 	this->costs = 0;
 	this->damage = 0;
 	this->general = g;
 	this->money = m;
+	this->affilation = a;
 }
 
 void player::set_general(std::pair<std::string, std::string> g) {

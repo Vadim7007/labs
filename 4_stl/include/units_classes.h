@@ -93,6 +93,7 @@ struct config {
 };
 
 class weapon;
+class aircraft;
 
 /*
 виртуальный класс для кораблей и самолетов
@@ -109,6 +110,7 @@ public:
 	friend int distance(const object& a, const object& b);
 	int get_cost() const noexcept;
 	void increase_cost(const int a) noexcept;
+	std::pair<int, int> get_coord() const noexcept;
 	virtual void recovery() = 0;
 	virtual bool correct() = 0;
 
@@ -148,6 +150,9 @@ public:
 	aircraft* use_air(aircrafts a);
 	void recovery();
 	bool correct();
+	void remove(aircraft* a);
+	bool get_max_a();
+	void add_aircraft(aircraft* a);
 
 	const ships type;	// тип корабля	
 
@@ -168,7 +173,7 @@ class aircraft : public object
 public:
 	aircraft(const struct config& p, const bool a, 
 		const aircrafts t, const int r, ship* const s);
-	~aircraft();
+	~aircraft() {};
 	void return_back();
 	void transfer(ship& s);
 	void attack(aircraft& a);
@@ -180,7 +185,7 @@ public:
 	const int refueling;	// время на заправку самолета
 
 protected:
-	virtual void download_arms(std::vector<std::vector<weapon>>& v);
+	virtual void download_arms(std::vector<std::vector<weapon>>& v) {};
 
 	ship* affiliation_ship;	// корабль, которому принадлежит самолет
 };

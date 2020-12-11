@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <fstream>
 #include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/my_stdlib.h"
 #include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/mission_classes.h"
 

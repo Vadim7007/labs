@@ -30,6 +30,7 @@ struct param_mission { // парамеры миссии, загружаемые 
 	std::vector <std::pair<std::string, std::string>> list;
 };
 
+class player;
 
 /*
 класс таблицы для хранения указателей на корабли, сортируются по позывным
@@ -64,14 +65,13 @@ class mission
 {
 public:
 	mission(const struct mode_mission &m, const struct param_mission &p);
-	~mission();
+	~mission() {};
 	const struct param_mission param;	// параметры игры
 	const struct mode_mission mode;		// параметры для настройки режима игры
 
 	bool buy_or_sell(player& p);
 	bool transfer(aircraft& a, ship& s);
 	void finish();
-	void destroy(object& o);
 	bool modificate(object& o);
 	bool reached(ship& s);
 	void general_death(player& p);
@@ -94,11 +94,12 @@ class player
 {
 public:
 	player() {};
-	player(std::pair<std::string, std::string> g, int m);
+	player(std::pair<std::string, std::string> g, int m, bool a);
 	~player() {};
 	void set_general(std::pair<std::string, std::string>);
 	std::pair<std::string, std::string> get_general() const;
 	void increase_damage(const int a);
+	bool affilation;
 
 protected:
 	int money;										// текущее количество денег
