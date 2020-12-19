@@ -1,24 +1,120 @@
-﻿#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/mission_classes.h"
+﻿#include "/Users/vadim/Desktop/Me/Programming/study/Lab4/include/mission_classes.h"
 
-mission::mission(const struct mode_mission& m, const struct param_mission& p)
-	: param(p), mode(m), arena(p.size, m.random) {
-	this->lenhtg_list = this->param.list.size() - 2;
+mission::mission(const struct mode_mission& m, 
+	const struct param_mission& p, const struct config& c)
+	: param(p), mode(m), conf(c), arena(p.size, m.random) {
+	this->lenhtg_list = this->param.list.size();
 	this->p1 = player(p.list[this->lenhtg_list + 1], round(p.money / p.difficult), true);
 	this->p2 = player(p.list[this->lenhtg_list ], round(p.money * p.difficult), false);
 }
 
-bool mission::buy_or_sell(player& p) {
-	bool buy_ship(player & p);
-	void sell_ship(player & p);
-	bool buy_aircraft(player & p);
-	void sell_aircraft(player & p);
-	bool buy_weapons(ship & s);
-	bool sell_weapons(ship & s);
-	bool buy_ammunations(ship & s);
-	bool sell_ammunations(ship & s);
+std::pair<std::string, std::string>& mission::get_commander() {
+	this->lenhtg_list--;
+	std::pair<std::string, std::string> s = std::move(param.list[this->lenhtg_list]);
+	return s;
+}
+
+bool mission::buy_ship(player& pl, ships t){
+	if (pl.set_money(this->conf.c_p_o[t].cost))
+	{
+		std::string name = "Ship" + this->lenhtg_list;
+		if (pl.affilation)
+		{
+			this->ships1.add_ship(conf, true, t,
+				std::move(this->get_commander()), std::move(name));
+		}
+		else {
+			this->ships2.add_ship(conf, false, t,
+				std::move(this->get_commander()), std::move(name));
+		}
+		return true;
+	}
+	else return false;
+}
+
+void mission::sell_ship(player& pl, const int index){
+	if (pl.affilation)
+	{
+		auto s = this->ships1.GetById(index);
+		pl.set_money(-s->get_cost());
+		this->ships1.del_ship(*s);		
+	}
+	else {
+		auto s = this->ships2.GetById(index);
+		pl.set_money(-s->get_cost());
+		this->ships2.del_ship(*s);
+	}
+}
+	
+bool mission::buy_aircraft(player& p, aircrafts t, const int index) {
+	if (p.affilation)
+	{
+		auto s = this->ships1.GetById(index);
+		aircraft a(conf, p.affilation, t, 2, &(*s));
+		int mon = a.get_cost();
+		if (p.set_money(mon))
+		{
+			s->add_aircraft(&a);
+			s->increase_cost(mon);
+			return true;
+		}
+	}
+	else {
+		auto s = this->ships2.GetById(index);
+		aircraft a(conf, p.affilation, t, 2, &(*s));
+		int mon = a.get_cost();
+		if (p.set_money(mon))
+		{
+			s->add_aircraft(&a);
+			s->increase_cost(mon);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool mission::buy_weapons(player& p, weapons t, const int index){
+	if (p.affilation)
+	{
+		auto s = this->ships1.GetById(index);
+		weapon w(&*s, t);
+		int mon = conf.c_p_w[t].cost;
+		if (p.set_money(mon))
+		{
+			s->add_weapon(&w);
+			s->increase_cost(mon);
+			return true;
+		}
+	}
+	else {
+		auto s = this->ships2.GetById(index);
+		weapon w(&*s, t);
+		int mon = conf.c_p_w[t].cost;
+		if (p.set_money(mon))
+		{
+			s->add_weapon(&w);
+			s->increase_cost(mon);
+			return true;
+		}
+	}
+	return false;
+}
+
+void mission::buy_ammunations(player& p, ship& s) {
+	int mon = s.get_storage();
+	if (!p.set_money(mon))
+	{
+		mon = p.get_money();
+		p.set_money(mon);
+	}
+	s.set_ammo(mon / 3, mon / 3, mon / 3);
+	s.increase_cost(mon);
 }
 
 bool mission::end_turn() {
+	// ходит другой игрок
+	player_turn();
+
 	// проверка всех кораблей
 	int k = ships1.size();
 	for (int i = 0; i < k; i++)
@@ -72,7 +168,7 @@ bool mission::end_turn() {
 }
 
 bool mission::transfer(aircraft& a, ship& s) {
-	if (s.type != cruiser)
+	if (s.type != cruiser_t)
 	{
 		a.transfer(s);
 	}
@@ -95,6 +191,11 @@ void mission::general_death(player& p) {
 	p.set_general({ "Admiral died", p.get_general().second });
 }
 
+bool mission::modificate(object& o, const modificated_parametrs p) {
+
+}
+
+
 /*
 метод извлечения ссылки на обьект по позывному. Если ссылки по этому ключу
 не существует, добавляет nullptr с таким ключом и его возвращает
@@ -109,7 +210,7 @@ std::shared_ptr<ship> table::get_ship(const std::string& s) {
 int table::get_num(const std::string& s) const {
 	for (int i = 0; i < this->conformity.size(); i++)
 	{
-		if (s == this->conformity[i])
+		if (s == this->conformity[i].first)
 		{
 			return i;
 		}
@@ -117,15 +218,13 @@ int table::get_num(const std::string& s) const {
 	return -1;
 }
 
-void table::add_ship(const struct const_param_object& c_p,
-	const struct param_object& p,
-	const struct param_ship& p_s, const bool a, const ships t,
+void table::add_ship(const struct config& p, const bool a, const ships t,
 	std::pair<std::string, std::string>&& c, std::string&& n) {
-	const std::string a = n;
-	n = a;
-	this->array[n] = std::make_shared<ship>(c_p, p, p_s, a, t, std::move(c), std::move(n));
-	n = a;
-	this->conformity.push_back(n);
+	const std::string s = n;
+	this->array[n] = std::make_shared<ship>(p, a, t, std::move(c), std::move(n));
+	n = s;
+	this->conformity.push_back({ n, ids });
+	ids++;
 }
 
 bool table::find_ship(const std::string& s) const {
@@ -150,11 +249,22 @@ std::shared_ptr<ship> table::operator[](const std::string& s) {
 
 std::shared_ptr<ship> table::operator[](const int n) {
 	auto s = this->conformity[n];
-	if (!this->find_ship(s))
+	if (!this->find_ship(s.first))
 	{
 		return nullptr;
 	}
-	return this->get_ship(s);
+	return this->get_ship(s.first);
+}
+
+std::shared_ptr<ship> table::GetById(int id) {
+	for (int i = 0; i < this->conformity.size(); i++)
+	{
+		if (id == this->conformity[i].second)
+		{
+			return get_ship(this->conformity[i].first);
+		}
+	}
+	return nullptr;
 }
 
 player::player(std::pair<std::string, std::string> g, int m, bool a) {
@@ -176,6 +286,20 @@ std::pair<std::string, std::string> player::get_general() const {
 void player::increase_damage(const int a) {
 	if (a>=0) this->damage += a;
 	return;
+}
+
+bool player::set_money(int increase) {
+	if (increase > this->money)
+	{
+		return false;
+	}
+	this->money -= increase;
+	this->costs += increase;
+	return true;
+}
+
+int player::get_money() {
+	return this->money;
 }
 
 map::map(const std::pair<int, int> s, bool random = false){

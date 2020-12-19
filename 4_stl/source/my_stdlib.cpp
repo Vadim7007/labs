@@ -1,5 +1,4 @@
-﻿//#include "my_stdlib.h"
-#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/my_stdlib.h"
+﻿#include "/Users/vadim/Desktop/Me/Programming/study/Lab4/include/my_stdlib.h"
 
 namespace mine {
 	char* getstr(std::istream& istream) {

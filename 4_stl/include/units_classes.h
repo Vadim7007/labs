@@ -1,12 +1,10 @@
 ﻿#pragma once
 
-
 #include "my_stdlib.h"
-
 
 enum ships
 {	// виды кораблей
-	cruiser,
+	cruiser_t,
 	aircraft_carrier_cruiser,
 	aircraft_carrier
 };
@@ -62,7 +60,7 @@ struct config {
 
 	/*
 	параметры объектов присваиваются кораблям
-	самолетам они присваиваются с коэффицентом
+	самолетам они присваиваются с коэффицентом (через функции)
 	*/
 
 	// неизменняемые параметры объекта, присваиваются при инциализации
@@ -94,6 +92,7 @@ struct config {
 
 class weapon;
 class aircraft;
+class ship;
 
 /*
 виртуальный класс для кораблей и самолетов
@@ -153,11 +152,12 @@ public:
 	void remove(aircraft* a);
 	bool get_max_a();
 	void add_aircraft(aircraft* a);
-
+	void add_weapon(weapon* w);
+	void set_ammo(const int a1, const int a2, const int a3);
+	int get_storage() const noexcept { return param.p_o[type].storage; }
 	const ships type;	// тип корабля	
 
 protected:
-	int max_aircraft;								// максимальное количество самолетов
 	std::vector<std::deque<aircraft>> own_aircrafts;// все самолеты
 	float bonus = 1;								// бонус за командира или его отсутствие
 	std::pair<std::string, std::string> commander;	// звание и имя капитана судна

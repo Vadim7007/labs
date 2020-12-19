@@ -1,4 +1,4 @@
-﻿#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/Download_config.h"
+﻿#include "/Users/vadim/Desktop/Me/Programming/study/Lab4/include/Download_config.h"
 
 #define PATH1 "/Users/vadim/Desktop/Я/Программирование/study/Lab4/config/config.txt"
 #define PATH2 "/Users/vadim/Desktop/Я/Программирование/study/Lab4/config/param.txt"

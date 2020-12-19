@@ -1,4 +1,4 @@
-﻿#include "/Users/vadim/Desktop/Я/Программирование/study/Lab4/include/units_classes.h"
+﻿#include "/Users/vadim/Desktop/Me/Programming/study/Lab4/include/units_classes.h"
 
 object::object(const struct config& p, const bool a) noexcept : affiliation(a) {
 	this->param = p;
@@ -75,6 +75,17 @@ void object::increase_cost(const int a) noexcept {
 
 std::pair<int, int> object::get_coord() const noexcept {
 	return this->currnet_coord;
+}
+
+// может вызвать исключение
+void ship::set_ammo(const int a1, const int a2, const int a3) {
+	if ((a1 + a2 + a3) > this->param.p_o[this->type].storage) {
+		throw std::exception("incorrect arguments");
+	}
+	
+	this->ammo[0] = a1;
+	this->ammo[1] = a2;
+	this->ammo[2] = a3;
 }
 
 bool ship::correct() {
@@ -232,7 +243,25 @@ bool ship::get_max_a() {
 }
 
 void ship::add_aircraft(aircraft* a) {
-	this->own_aircrafts[a->type].push_back(*a);
+	int size = 0;
+	for (int i = 0; i < this->own_aircrafts.size(); i++)
+	{
+		size += this->own_aircrafts[i].size();
+	}
+	if (this->param.p_s[this->type].max_aircraft > size) {
+		this->own_aircrafts[a->type].push_back(*a);
+	}
+}
+
+void ship::add_weapon(weapon* w) {
+	int size = 0;
+	for (int i = 0; i < this->arms.size(); i++)
+	{
+		size += this->arms[i].size();
+	}
+	if (this->param.p_s[this->type].max_weapon > size) {
+		this->arms[w->type].push_back(*w);
+	}
 }
 
 aircraft::aircraft(const struct config& p, const bool a,
