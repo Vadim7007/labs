@@ -22,6 +22,7 @@
 #include <vector>
 #include <map>
 #include <deque>
+#include <algorithm>
 
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -121,5 +122,3 @@ namespace mine {
 		bool isNull() const { return m_ptr == nullptr; }
 	};
 }
-// работа с консолью
-#include <Windows.h>

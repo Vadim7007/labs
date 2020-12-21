@@ -33,15 +33,14 @@ struct param_mission { // парамеры миссии, загружаемые 
 class player
 {
 public:
-	player() {};
-	player(std::pair<std::string, std::string> g, int m, bool a);
-	~player() {};
-	void set_general(std::pair<std::string, std::string>);
-	std::pair<std::string, std::string> get_general() const;
-	void increase_damage(const int a);
-	bool set_money(int increase);
-	int get_money();
-
+	player() noexcept {};
+	player(std::pair<std::string, std::string>&& g, const int m, const bool a) noexcept;
+	~player() noexcept {};
+	void set_general(std::pair<std::string, std::string>&& g) noexcept;
+	std::pair<std::string, std::string> get_general() const noexcept;
+	void increase_damage(const int a) noexcept;
+	bool set_money(const int increase) noexcept;
+	int get_money() const noexcept;
 
 	bool affilation;
 
@@ -63,14 +62,14 @@ public:
 	std::shared_ptr<ship> get_ship(const std::string& s) noexcept;
 	int get_num(const std::string& s) const noexcept;
 	void add_ship(const struct config& p, const bool a, const ships t,
-		std::pair<std::string, std::string>&& c, std::string&& n) noexcept;
+		std::pair<std::string, std::string>&& c, std::string&& n);
 	bool find_ship(const std::string& s) const noexcept;
 	void del_ship(const ship& s) noexcept;
 	void del_ship(const std::string& s) noexcept;
 	std::shared_ptr<ship> operator[](const std::string& s) noexcept;
 	std::shared_ptr<ship> operator[](const int n) noexcept;
-	int size() const { return conformity.size(); }
-	std::shared_ptr<ship> GetById(int id);
+	int size() const noexcept { return conformity.size(); }
+	std::shared_ptr<ship> GetById(const int id) noexcept;
 
 private:
 	int ids;
@@ -84,11 +83,10 @@ private:
 class cell
 {
 public:
-	cell(const int x, const int y);
-	~cell() {};
-	void set_state(const states s);
+	cell(const int x, const int y) noexcept;
+	~cell() noexcept {};
+	void set_state(const states s) noexcept;
 
-private:
 	states state;						// состояние ячейки
 	const std::pair<int, int> coord;	// координаты ячейки
 };
@@ -96,13 +94,15 @@ private:
 /*
 класс игровой карты
 */
-class map
+class Map
 {
 public:
-	map() {};
-	map(const std::pair<int, int>, bool);
-	~map() {};
-	map& operator=(map&& m);
+	Map() noexcept {};
+	Map(const std::pair<int, int>, const bool) noexcept;
+	~Map() noexcept {};
+	std::vector <cell>& operator[](const int i);
+	std::vector<cell*> get_way(const cell& from, const cell& to) noexcept;
+	void move_ob(object& o, cell& to) noexcept;
 
 protected:
 	std::vector<std::vector<cell>> array;	// массив ячеек карты
@@ -128,19 +128,19 @@ public:
 	bool buy_weapons(player& p, weapons t, const int index);
 	void buy_ammunations(player& p, ship& s);
 	void player_turn();
-	bool modificate(object& o, const modificated_parametrs p);
-\
+	bool modificate(player& p, object& o, const modificated_parametrs mp);
 	bool transfer(aircraft& a, ship& s);
 	void general_death(player& p);
 	// возвращает true, если игра завершена
 	bool end_turn();
-	std::pair<std::string, std::string>& get_commander();
+	std::pair<std::string, std::string> get_commander();
+
+	player p1;			// пользователь
+	player p2;			// бот
+	Map	arena;			// игровая карта
 
 protected:
 	int lenhtg_list;	// количесвто незанятых командиров
-	map	arena;			// игровая карта
 	table ships1;		// таблица кораблей пользователя
 	table ships2;		// таблица кораблей бота
-	player p1;			// пользователь
-	player p2;			// бот
 };

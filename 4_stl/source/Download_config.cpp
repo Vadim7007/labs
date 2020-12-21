@@ -186,8 +186,8 @@ bool download_info(config& c, param_mission& p, mode_mission& m) {
 	default_download(c0, p0, m0);
 
 	bool flag = download_config(c);
-	flag *= download_param(p);
-	flag *= download_mode(m);
+	flag &= download_param(p);
+	flag &= download_mode(m);
 
 	if (!flag)
 	{

@@ -11,9 +11,9 @@ enum ships
 
 enum aircrafts {
 	// виды самолетов
-	fighter,
-	front_bomber,
-	bomber
+	fighter_t,
+	front_bomber_t,
+	bomber_t
 };
 
 enum weapons {
@@ -101,17 +101,20 @@ class object
 {
 public:
 	object(const struct config& p, const bool a) noexcept;
-	~object() {};
-	virtual void attack(aircraft& a) = 0;
-	virtual void attack(ship& s) = 0;
+	~object() noexcept {};
+	virtual void attack(aircraft& a) noexcept = 0;
+	virtual void attack(ship& s) noexcept = 0;
 	void modificate(const modificated_parametrs& m) noexcept;
 	void set_coord(const std::pair<int, int>& p) noexcept;
+	void set_current_coord(const std::pair<int, int>& a) noexcept;
 	friend int distance(const object& a, const object& b);
 	int get_cost() const noexcept;
 	void increase_cost(const int a) noexcept;
 	std::pair<int, int> get_coord() const noexcept;
-	virtual void recovery() = 0;
-	virtual bool correct() = 0;
+	virtual void recovery() noexcept = 0;
+	virtual bool correct() noexcept = 0;
+	virtual int get_range() const noexcept = 0;
+	bool decrease_action() noexcept;
 
 	bool destroyed;			// флаг, означающий уничтожение корабля
 	bool activate;			// флаг активации объекта в данный момент
@@ -119,7 +122,7 @@ public:
 	friend class weapon;
 
 protected:
-	virtual void download_arms(std::vector<std::vector<weapon>>& v) = 0;
+	virtual void download_arms(std::vector<std::vector<weapon>>& v) noexcept = 0;
 
 	int action;								// количесвто возможных действий
 	int hp;									// количество прочности
@@ -140,21 +143,23 @@ class ship: public object
 public:
 	ship(const struct config& p, const bool a, const ships t,
 		 std::pair<std::string, std::string>&& c, std::string&& n) noexcept;
-	~ship() {};
+	~ship() noexcept {};
 	std::string get_name() const noexcept;
 	std::pair<std::string, std::string> get_commander() const noexcept;
 	void set_bonus(const float f) noexcept;
-	void attack(aircraft& a);
-	void attack(ship& s);
-	aircraft* use_air(aircrafts a);
-	void recovery();
-	bool correct();
-	void remove(aircraft* a);
-	bool get_max_a();
-	void add_aircraft(aircraft* a);
-	void add_weapon(weapon* w);
+	void attack(aircraft& a) noexcept;
+	void attack(ship& s) noexcept;
+	aircraft* use_air(aircrafts a) noexcept;
+	void recovery() noexcept;
+	bool correct() noexcept;
+	void remove(aircraft* a) noexcept;
+	bool get_max_a() const noexcept;
+	void add_aircraft(aircraft* a) noexcept;
+	void add_weapon(weapon* w) noexcept;
 	void set_ammo(const int a1, const int a2, const int a3);
 	int get_storage() const noexcept { return param.p_o[type].storage; }
+	int get_range() const noexcept { return param.p_o[type].range; }
+
 	const ships type;	// тип корабля	
 
 protected:
@@ -172,20 +177,24 @@ class aircraft : public object
 {
 public:
 	aircraft(const struct config& p, const bool a, 
-		const aircrafts t, const int r, ship* const s);
-	~aircraft() {};
-	void return_back();
+		const aircrafts t, const int r, ship* const s) noexcept;
+	aircraft(aircraft&& a) noexcept;
+	aircraft(const aircraft& a) noexcept;
+	~aircraft() noexcept {};
+	void return_back() noexcept;
 	void transfer(ship& s);
-	void attack(aircraft& a);
-	void attack(ship& s);
-	void recovery();
-	bool correct();
+	void attack(aircraft& a) noexcept;
+	void attack(ship& s) noexcept;
+	void recovery() noexcept;
+	bool correct() noexcept;
+	int get_range() const noexcept { return param.p_o[type].range; }
+	aircraft& operator=(aircraft&& a) noexcept;
 
 	const aircrafts type;	// тип самолета
 	const int refueling;	// время на заправку самолета
 
 protected:
-	virtual void download_arms(std::vector<std::vector<weapon>>& v) {};
+	virtual void download_arms(std::vector<std::vector<weapon>>& v) noexcept {};
 
 	ship* affiliation_ship;	// корабль, которому принадлежит самолет
 };
@@ -196,12 +205,12 @@ protected:
 class air_cruiser: public ship
 {
 public:
-	air_cruiser(const struct config& p, const bool a, const ships t,
-		const int m, std::pair<std::string, std::string>&& c, std::string&& n);
-	~air_cruiser() {};
+	air_cruiser(const struct config& p, const bool a,
+		std::pair<std::string, std::string>&& c, std::string&& n) noexcept;
+	~air_cruiser() noexcept {};
 
 private:
-	void download_arms(std::vector<std::vector<weapon>>& v);
+	void download_arms(std::vector<std::vector<weapon>>& v) noexcept;
 };
 
 /*
@@ -210,12 +219,12 @@ private:
 class air_carrier : public ship
 {
 public:
-	air_carrier(const struct config& p, const bool a, const ships t,
-		const int m, std::pair<std::string, std::string>&& c, std::string&& n);
-	~air_carrier() {};
+	air_carrier(const struct config& p, const bool a,
+		std::pair<std::string, std::string>&& c, std::string&& n) noexcept;
+	~air_carrier() noexcept {};
 
 private:
-	void download_arms(std::vector<std::vector<weapon>>& v);
+	void download_arms(std::vector<std::vector<weapon>>& v) noexcept;
 };
 
 /*
@@ -224,11 +233,11 @@ private:
 class cruiser : public ship
 {
 public:
-	cruiser(const struct config& p, const bool a, const ships t,
-		std::pair<std::string, std::string>&& c, std::string&& n);
-	~cruiser() {};
+	cruiser(const struct config& p, const bool a,
+		std::pair<std::string, std::string>&& c, std::string&& n) noexcept;
+	~cruiser() noexcept {};
 private:
-	void download_arms(std::vector<std::vector<weapon>>& v);
+	void download_arms(std::vector<std::vector<weapon>>& v) noexcept;
 };
 
 /*
@@ -238,11 +247,8 @@ class fighter: public aircraft
 {
 public:
 	fighter(const struct config& p, const bool a,
-		const aircrafts t, const int r, ship* const s);
-	~fighter() {};
-
-private:
-
+		const int r, ship* const s) noexcept;
+	~fighter() noexcept {};
 };
 
 /*
@@ -252,11 +258,8 @@ class bomber : public aircraft
 {
 public:
 	bomber(const struct config& p, const bool a,
-		const aircrafts t, const int r, ship* const s);
-	~bomber() {};
-
-private:
-
+		const int r, ship* const s) noexcept;
+	~bomber() noexcept {};
 };
 
 /*
@@ -266,11 +269,8 @@ class front_bomber : public aircraft
 {
 public:
 	front_bomber(const struct config& p, const bool a,
-		const aircrafts t, const int r, ship* const s);
-	~front_bomber() {};
-
-private:
-
+		const int r, ship* const s) noexcept;
+	~front_bomber() noexcept {};
 };
 
 /*
@@ -279,8 +279,9 @@ private:
 class weapon
 {
 public:
-	weapon(object* const o, const weapons t);
-	~weapon() { this->affilation_object = nullptr; };
+	weapon(object* const o, const weapons t) noexcept;
+	~weapon() noexcept { this->affilation_object = nullptr; };
+	weapon& operator=(const weapon& w) noexcept;
 	void attack(object& o) noexcept;
 	void modificate(const modificated_parametrs a) noexcept;
 	bool recharge() noexcept;
