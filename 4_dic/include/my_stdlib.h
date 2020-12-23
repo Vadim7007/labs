@@ -1,4 +1,9 @@
-﻿#pragma once
+﻿/**
+\file
+\brief Моя стандартная библиотека, особо важного ничего в себе не несет
+*/
+
+#pragma once
 
 // стандартное
 #include <math.h>
@@ -27,7 +32,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 namespace mine {
-	// функция ввода числа
+	/// функция ввода числа
 	template <class T>
 	int getn(T& a) {
 		using std::cin;
@@ -44,7 +49,7 @@ namespace mine {
 		return 1;
 	}
 
-	// функция изменения объема выделенной памяти
+	/// функция изменения объема выделенной памяти
 	template <class T>
 	T* r_alloc(const T* array, const int new_size, int length) {
 		T* n_array;
@@ -74,16 +79,16 @@ namespace mine {
 		return n_array;
 	}
 
-	// функция ввода строки произвольной длины
+	/// функция ввода строки произвольной длины
 	char* getstr(std::istream& istream);
 
-	// возвращает случайное число в диапозоне от - N до N - 1 включительно
+	/// возвращает случайное число в диапозоне от - N до N - 1 включительно
 	int random(const int N) noexcept;
 
-	// функция, генерирующая случайную строку длины n
+	/// функция, генерирующая случайную строку длины n
 	char* random_str(const int n) noexcept;
 
-	// умный указатель
+	/// реализация шаблона умного указателя
 	template<class T>
 	class ptr
 	{

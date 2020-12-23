@@ -246,7 +246,7 @@ void mission::player_turn() {
 			// перемещение
 			int x = ships2[i]->get_coord().first;
 			int y = ships2[i]->get_coord().second;
-			this->arena.move_ob(*ships2[i], arena[x + min / 2][y + min / 2]);
+			this->arena.move(*ships2[i], arena[x + min / 2][y + min / 2]);
 		}
 	}
 	else {
@@ -255,7 +255,7 @@ void mission::player_turn() {
 			// перемещение
 			int x = ships2[i]->get_coord().first;
 			int y = ships2[i]->get_coord().second;
-			this->arena.move_ob(*ships2[i], arena[x + min / 2][y + min / 2]);
+			this->arena.move(*ships2[i], arena[x + min / 2][y + min / 2]);
 			
 			// атака
 			for (size_t j = 0; j < ships1.size(); j++)
@@ -534,19 +534,19 @@ std::vector<cell*> Map::get_way(const cell& from, const cell& to) noexcept {
 	return way;
 }
 
-void Map::move_ob(object& o, cell& to) noexcept {
-	if (!o.activate) return;
-	auto coord = o.get_coord();
+void Map::move(ship& s, cell& to) noexcept {
+	if (!s.activate) return;
+	auto coord = s.get_coord();
 	auto from = (*this)[coord.first][coord.second];
-	o.set_coord(to.coord);
+	s.set_coord(to.coord);
 	auto way = this->get_way(from, to);
 
-	if (o.decrease_action()) {
-		for (int j = 0; j < std::min(o.get_range(), (int)way.size()); j++)
+	if (s.decrease_action()) {
+		for (int j = 0; j < std::min(s.get_range(), (int)way.size()); j++)
 		{
 			way[j]->set_state(busy);
-			(*this)[o.get_coord().first][o.get_coord().second].set_state(free_st);
-			o.set_current_coord(way[j]->coord);
+			(*this)[s.get_coord().first][s.get_coord().second].set_state(free_st);
+			s.set_current_coord(way[j]->coord);
 		}
 	}
 }
