@@ -92,6 +92,10 @@ bool object::decrease_action() noexcept {
 	return true;
 }
 
+int object::get_hp() const noexcept {
+	return hp;
+}
+
 // может вызвать исключение
 void ship::set_ammo(const int a1, const int a2, const int a3) {
 	if ((a1 + a2 + a3) > this->param.p_o[this->type].storage) {
@@ -220,30 +224,30 @@ void ship::attack(aircraft& a) noexcept {
 
 // в случае ошибки возвращает nullptr
 aircraft* ship::use_air(aircrafts a)noexcept {
-	if (this->own_aircrafts.size() <= a) {
-		if (!this->own_aircrafts[a].empty()) {
-			auto i = std::move(this->own_aircrafts[a][0]);
-			this->own_aircrafts[a].pop_front();
-			return &i;
-		}
-	}	
-	return nullptr;
+	if (!this->own_aircrafts[a].empty()) {
+		aircraft* i = new aircraft(this->own_aircrafts[a][0]);
+		this->own_aircrafts[a].pop_front();
+		this->decrease_action();
+		i->decrease_action();
+		return i;
+	}
+return nullptr;
 }
 
 // убирает из списка самолетов этого корабля самолет с указателем "a"
-void ship::remove(aircraft* a) noexcept {
-	int size = this->own_aircrafts[a->type].size();
-	int i;
-	for (i = 0; i < size; i++)
-	{
-		if (&this->own_aircrafts[a->type][i] == a) {
-			break;
-		}
-	}
-	if (i == size) {
+void ship::remove(aircrafts a) {
+	int size = this->own_aircrafts[a].size();
+	if (0 == size) {
 		throw std::exception("Such element is upsent");
 	}
-	this->own_aircrafts[a->type].erase(this->own_aircrafts[a->type].begin() + i);
+	auto i = this->own_aircrafts[a].end();
+	i--;
+	try {
+		this->own_aircrafts[a].erase(i);
+	}
+	catch (std::exception& e) {
+		throw std::exception("Such element is upsent");
+	};
 }
 
 // возвращает true, если есть свободое место для корабля
@@ -268,6 +272,7 @@ void ship::add_aircraft(aircraft* a) noexcept {
 	}
 	if (this->param.p_s[this->type].max_aircraft > size) {
 		this->own_aircrafts[a->type].push_back(*a);
+		a->set_coord(this->get_coord());
 	}
 }
 
@@ -381,16 +386,22 @@ void aircraft::attack(ship& s) noexcept {
 }
 
 void aircraft::transfer(ship& s) {
-	if (s.get_max_a())
+	/*if (s.get_max_a())
 	{
-		this->affiliation_ship->remove(this);
+		this->affiliation_ship->remove(this->type);
 		s.add_aircraft(this);
 		this->affiliation_ship = &s;
-	}
+	}*/
 }
 
 void aircraft::return_back() noexcept {
-	this->goal = this->affiliation_ship->get_coord();
+	auto s = this->affiliation_ship;
+	this->goal = s->get_coord();
+
+	if (distance(*this, *s) < 2) {
+		s->add_aircraft(this);
+		this->decrease_action();
+	}
 }
 
 aircraft& aircraft::operator=(aircraft&& a) noexcept {
@@ -453,24 +464,24 @@ void cruiser::download_arms(std::vector<std::vector<weapon>>& v) noexcept {
 fighter::fighter(const struct config& p, const bool a,
 	const int r, ship* const s) noexcept
 	: aircraft(p, a, fighter_t, r, s) {
-	std::vector<weapon> l{ {this, light}, {this, light} };
-	this->arms.push_back(l);
+	auto l = new std::vector<weapon>{ {this, light}, {this, light} };
+	this->arms.push_back(*l);
 }
 
 front_bomber::front_bomber(const struct config& p, const bool a,
 	const int r, ship* const s) noexcept
 	: aircraft(p, a, front_bomber_t, r, s) {
-	std::vector<weapon> l{ {this, light} };
-	std::vector<weapon> m{ {this, middle} };
-	this->arms.push_back(l);
-	this->arms.push_back(m);
+	auto l = new std::vector<weapon>{ {this, light}};
+	auto m = new std::vector<weapon>{ {this, middle}};
+	this->arms.push_back(*l);
+	this->arms.push_back(*m);
 }
 
 bomber::bomber(const struct config& p, const bool a,
 	const int r, ship* const s) noexcept
 	: aircraft(p, a, bomber_t, r, s) {
-	std::vector<weapon> m{ {this, middle}, {this, middle} };
-	this->arms.push_back(m);
+	auto m = new std::vector<weapon>{ {this, middle}, {this, middle} };
+	this->arms.push_back(*m);
 }
 
 weapon::weapon(object* const o, const weapons t) noexcept : type(t) {

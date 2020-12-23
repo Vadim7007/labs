@@ -40,6 +40,9 @@ void default_download(config& c0, param_mission& p0, mode_mission& m0) {
 	c0.c_p_w[0].cost = 100;
 	c0.c_p_w[1].cost = 150;
 	c0.c_p_w[2].cost = 250;
+	c0.c_p_w[0].max_ammunation = 250;
+	c0.c_p_w[1].max_ammunation = 150;
+	c0.c_p_w[2].max_ammunation = 100;
 	c0.p_o[0].HP = 550;
 	c0.p_o[1].HP = 400;
 	c0.p_o[2].HP = 650;

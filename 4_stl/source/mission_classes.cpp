@@ -49,23 +49,55 @@ void mission::sell_ship(player& pl, const int index){
 bool mission::buy_aircraft(player& p, aircrafts t, const int index) {
 	if (p.affilation)
 	{
+		if (this->param.max_ship == ships1.size()) return false;
 		auto s = this->ships1.GetById(index);
-		aircraft a(conf, p.affilation, t, 2, &(*s));
-		int mon = a.get_cost();
+		aircraft* a;
+		switch (t)
+		{
+		case fighter_t:
+			a = new fighter(conf, true, 2, &(*s));
+			break;
+		case front_bomber_t:
+			a = new front_bomber(conf, true, 2, &(*s));
+			break;
+		case bomber_t:
+			a = new bomber(conf, true, 2, &(*s));
+			break;
+		default:
+			throw std::exception("Incorrect argument: type of aircraft");
+		}
+
+		int mon = a->get_cost();
 		if (p.set_money(mon))
 		{
-			s->add_aircraft(&a);
+			s->add_aircraft(a);
 			s->increase_cost(mon);
 			return true;
 		}
 	}
 	else {
+		if (this->param.max_ship == ships2.size()) return false;
 		auto s = this->ships2.GetById(index);
-		aircraft a(conf, p.affilation, t, 2, &(*s));
-		int mon = a.get_cost();
+		aircraft* a;
+		switch (t)
+		{
+		case fighter_t:
+			a = new fighter(conf, true, 2, &(*s));
+			break;
+		case front_bomber_t:
+			a = new front_bomber(conf, true, 2, &(*s));
+			break;
+		case bomber_t:
+			a = new bomber(conf, true, 2, &(*s));
+			break;
+		default:
+			throw std::exception("Incorrect argument: type of aircraft");
+		}
+
+		int mon = a->get_cost();
 		if (p.set_money(mon))
 		{
-			s->add_aircraft(&a);
+			s->add_aircraft(a);
 			s->increase_cost(mon);
 			return true;
 		}
@@ -77,6 +109,9 @@ bool mission::buy_weapons(player& p, weapons t, const int index){
 	if (p.affilation)
 	{
 		auto s = this->ships1.GetById(index);
+		if ((t == heavy &&
+			(s->type == aircraft_carrier || s->type == aircraft_carrier_cruiser))
+			|| (t == middle && s->type == aircraft_carrier)) return false;
 		weapon w(&*s, t);
 		int mon = conf.c_p_w[t].cost;
 		if (p.set_money(mon))
@@ -88,6 +123,9 @@ bool mission::buy_weapons(player& p, weapons t, const int index){
 	}
 	else {
 		auto s = this->ships2.GetById(index);
+		if ((t == heavy &&
+			(s->type == aircraft_carrier || s->type == aircraft_carrier_cruiser))
+			|| (t == middle && s->type == aircraft_carrier)) return false;
 		weapon w(&*s, t);
 		int mon = conf.c_p_w[t].cost;
 		if (p.set_money(mon))
@@ -100,15 +138,24 @@ bool mission::buy_weapons(player& p, weapons t, const int index){
 	return false;
 }
 
-void mission::buy_ammunations(player& p, ship& s) {
-	int mon = s.get_storage();
+void mission::buy_ammunations(player& p, const int index) {
+	std::shared_ptr<ship> s;
+	if (p.affilation)
+	{
+		s = this->ships1.GetById(index);
+	}
+	else {
+		s = this->ships2.GetById(index);
+	}
+
+	int mon = s->get_storage();
 	if (!p.set_money(mon))
 	{
 		mon = p.get_money();
 		p.set_money(mon);
 	}
-	s.set_ammo(mon / 3, mon / 3, mon / 3);
-	s.increase_cost(mon);
+	s->set_ammo(mon / 3, mon / 3, mon / 3);
+	s->increase_cost(mon);
 }
 
 bool mission::end_turn() {
@@ -146,8 +193,22 @@ bool mission::end_turn() {
 		}
 	}
 
+	bool win = false;
+	// если корабли достигли контрольной точки
+	for (size_t i = 0; i < ships2.size(); i++)
+	{
+		win = true;
+		if (!((ships2[i]->get_coord().first > param.size.first - 7) &&
+			(ships2[i]->get_coord().second > param.size.second - 7))) {
+			win = false;
+			break;
+		}
+	}
 	// если кораблей где-то не осталось
-	if (!ships1.size() || !ships2.size()) {
+	win |= (!ships1.size() || !ships2.size());
+	// если достигнута сумма уничтоженного
+	win |= (p1.get_damage() > param.goal || p2.get_damage() > param.goal);
+	if (win) {
 		return true;
 	}
 
@@ -168,7 +229,73 @@ bool mission::end_turn() {
 }
 
 void mission::player_turn() {
+	int min = ships2[0]->get_range();
+	for (size_t i = 0; i < ships2.size(); i++)
+	{
+		min = std::min(min, ships2[i]->get_range());
+	}
+	if (mine::random(2) > -2) {
+		for (size_t i = 0; i < ships2.size(); i++)
+		{
+			// атака
+			for (size_t j = 0; j < ships1.size(); j++)
+			{
+				ships2[i]->attack(*ships1[j]);
+			}
 
+			// перемещение
+			int x = ships2[i]->get_coord().first;
+			int y = ships2[i]->get_coord().second;
+			this->arena.move_ob(*ships2[i], arena[x + min / 2][y + min / 2]);
+		}
+	}
+	else {
+		for (size_t i = 0; i < ships2.size(); i++)
+		{
+			// перемещение
+			int x = ships2[i]->get_coord().first;
+			int y = ships2[i]->get_coord().second;
+			this->arena.move_ob(*ships2[i], arena[x + min / 2][y + min / 2]);
+			
+			// атака
+			for (size_t j = 0; j < ships1.size(); j++)
+			{
+				ships2[i]->attack(*ships1[j]);
+			}
+		}
+	}
+}
+
+void mission::player_ready() {
+	bool flag = true;
+	p2.set_general(param.list[lenhtg_list]);
+	while (flag)
+	{
+		buy_ship(p2, cruiser_t);
+		ships2[ships2.size() - 1]->set_coord({ (ships2.size() - 1)%3, (ships2.size() - 1) / 3});
+		buy_ammunations(p2, ships2.size()-1);
+		buy_ship(p2, aircraft_carrier_cruiser);
+		ships2[ships2.size() - 1]->set_coord({ ships2.size()%3, ships2.size() / 3 });
+		buy_ammunations(p2, ships2.size() - 1);
+		buy_aircraft(p2, fighter_t, ships2.size() - 1);
+		buy_aircraft(p2, front_bomber_t, ships2.size() - 1);
+		flag &= buy_ship(p2, aircraft_carrier);
+		ships2[ships2.size() - 1]->set_coord({ (ships2.size()+1)%3, (ships2.size() + 1)/ 3});
+		buy_ammunations(p2, ships2.size() - 1);
+		buy_aircraft(p2, fighter_t, ships2.size() - 1);
+		buy_aircraft(p2, front_bomber_t, ships2.size() - 1);
+		buy_aircraft(p2, bomber_t, ships2.size() - 1);
+		flag &= buy_aircraft(p2, bomber_t, ships2.size() - 1);
+	}
+}
+
+std::shared_ptr<ship> mission::GetById(const player& p, const int id) noexcept {
+	if (p.affilation) {
+		return this->ships1.GetById(id);
+	}
+	else {
+		return this->ships2.GetById(id);
+	}
 }
 
 bool mission::transfer(aircraft& a, ship& s) {
@@ -305,7 +432,7 @@ player::player(std::pair<std::string, std::string>&& g, const int m, const bool 
 	this->affilation = a;
 }
 
-void player::set_general(std::pair<std::string, std::string> &&g) noexcept {
+void player::set_general(std::pair<std::string, std::string> g) noexcept {
 	this->general = g;
 }
 
@@ -332,16 +459,19 @@ int player::get_money() const noexcept {
 	return this->money;
 }
 
-Map::Map(const std::pair<int, int> s, bool random = false) noexcept {
+Map::Map(const std::pair<int, int> s, bool random = false) noexcept
+: size(s) {
 	if (random)
 	{
 		for (int i = 0; i < s.first; i++)
 		{
 			std::vector<cell> v;
-			for (int j = 0; i < s.second; i++)
+			for (int j = 0; j < s.second; j++)
 			{
 				cell c = { i, j };
-				if (mine::random(10) > 6) c.set_state(ground);
+				if (mine::random(10) > 6 &&
+					(i > 6 && i < (size.first-6) && j > 6 && j < (size.second - 6)))
+					c.set_state(ground);
 				v.push_back(c);
 			}
 			this->array.push_back(v);
@@ -351,7 +481,7 @@ Map::Map(const std::pair<int, int> s, bool random = false) noexcept {
 		for (int i = 0; i < s.first; i++)
 		{
 			std::vector<cell> v;
-			for (int j = 0; i < s.second; i++)
+			for (int j = 0; j < s.second; j++)
 			{
 				v.push_back({i, j});
 			}

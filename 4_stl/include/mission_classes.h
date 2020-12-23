@@ -36,11 +36,12 @@ public:
 	player() noexcept {};
 	player(std::pair<std::string, std::string>&& g, const int m, const bool a) noexcept;
 	~player() noexcept {};
-	void set_general(std::pair<std::string, std::string>&& g) noexcept;
+	void set_general(std::pair<std::string, std::string> g) noexcept;
 	std::pair<std::string, std::string> get_general() const noexcept;
 	void increase_damage(const int a) noexcept;
 	bool set_money(const int increase) noexcept;
 	int get_money() const noexcept;
+	int get_damage() const noexcept { return damage; }
 
 	bool affilation;
 
@@ -122,15 +123,17 @@ public:
 	const struct mode_mission mode;		// параметры для настройки режима игры
 	const struct config conf;			// параметры юнитов
 
+	std::shared_ptr<ship> GetById(const player& p, const int id) noexcept;
 	bool buy_ship(player& p, ships t);
 	void sell_ship(player& pl, const int index);
 	bool buy_aircraft(player& p, aircrafts t, const int index);
 	bool buy_weapons(player& p, weapons t, const int index);
-	void buy_ammunations(player& p, ship& s);
+	void buy_ammunations(player& p, const int index);
 	void player_turn();
 	bool modificate(player& p, object& o, const modificated_parametrs mp);
 	bool transfer(aircraft& a, ship& s);
 	void general_death(player& p);
+	void player_ready();
 	// возвращает true, если игра завершена
 	bool end_turn();
 	std::pair<std::string, std::string> get_commander();

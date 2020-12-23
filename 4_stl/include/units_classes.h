@@ -109,6 +109,7 @@ public:
 	void set_current_coord(const std::pair<int, int>& a) noexcept;
 	friend int distance(const object& a, const object& b);
 	int get_cost() const noexcept;
+	int get_hp() const noexcept;
 	void increase_cost(const int a) noexcept;
 	std::pair<int, int> get_coord() const noexcept;
 	virtual void recovery() noexcept = 0;
@@ -152,7 +153,7 @@ public:
 	aircraft* use_air(aircrafts a) noexcept;
 	void recovery() noexcept;
 	bool correct() noexcept;
-	void remove(aircraft* a) noexcept;
+	void remove(aircrafts a);
 	bool get_max_a() const noexcept;
 	void add_aircraft(aircraft* a) noexcept;
 	void add_weapon(weapon* w) noexcept;

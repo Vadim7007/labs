@@ -65,4 +65,6 @@ int main() {
 			array2[i]->set_coord({ 1, 1 });
 			array2[i]->return_back();
 		}
+		M.player_ready();
+		M.end_turn();
 }
