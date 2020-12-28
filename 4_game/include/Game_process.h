@@ -11,13 +11,24 @@ public:
 
     void update(float delta);
 
-    int interpritation_x(const int x);
-    int interpritation_y(const int y);
+    friend int interpritation_x(const int x);
+    friend int interpritation_y(const int y);
+    friend int interpritation_x_1(const int x);
+    friend int interpritation_y_1(const int y);
 
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     void onMouseDown(cocos2d::Event *event);
+    void onMouseDownM(cocos2d::Event* event, cell& c);
+    /*
+    void display_map();
+    void display_unit1();
+    void display_unit2();
+    */
+    friend void display_map(Scene* sc);
+    friend void display_unit1(Scene* sc);
+    friend void display_unit2(Scene* sc);
 
-    cocos2d::EventListenerKeyboard* listener_k;
+    cocos2d::EventListenerKeyboard* listener;
     cocos2d::EventListenerMouse* _mouseListener;
 
     cocos2d::Label* label_damage;

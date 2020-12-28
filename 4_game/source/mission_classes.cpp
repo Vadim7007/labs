@@ -307,6 +307,22 @@ std::shared_ptr<ship> mission::GetById(const player& p, const int id) noexcept {
 	}
 }
 
+std::shared_ptr<ship> mission::GetByCoord(cell& c) noexcept {
+	for (size_t i = 0; i < ships1.size(); i++)
+	{
+		if (ships1[i]->get_coord() == c.coord) {
+			return ships1[i];
+		}
+	}
+	for (size_t i = 0; i < ships2.size(); i++)
+	{
+		if (ships1[i]->get_coord() == c.coord) {
+			return ships1[i];
+		}
+	}
+	return nullptr;
+}
+
 bool mission::transfer(aircraft& a, ship& s) {
 	if (s.type != cruiser_t)
 	{
@@ -592,8 +608,8 @@ std::vector<cell*> Mapp::get_way(const cell& from, const cell& to) noexcept {
 			}
 		}
 
-		int vec_x = to.coord.first - current_cell->coord.first;
-		int vec_y = to.coord.first - current_cell->coord.second;
+		vec_x = to.coord.first - current_cell->coord.first;
+		vec_y = to.coord.first - current_cell->coord.second;
 	}	
 	return way;
 }
