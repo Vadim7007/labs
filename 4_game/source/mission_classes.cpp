@@ -15,8 +15,8 @@ std::pair<std::string, std::string> mission::get_commander() {
 }
 
 bool mission::buy_ship(player& pl, ships t){
-	if (pl.affilation && (ships1.size() == param.max_ship/2)) return false;
-	if (!pl.affilation && (ships2.size() == param.max_ship/2)) return false;
+	if (pl.affilation && (ships1.size() >= param.max_ship/2)) return false;
+	if (!pl.affilation && (ships2.size() >= param.max_ship/2)) return false;
 	if (pl.set_money(this->conf.c_p_o[t].cost))
 	{
 		std::string name = "Ship" + std::to_string(this->lenhtg_list);
@@ -55,7 +55,7 @@ bool mission::buy_aircraft(player& p, aircrafts t, const int index) {
 	{
 		auto s = this->ships1.GetById(index);
 		if (s == nullptr) return false;
-		if (s->get_a() == s->get_max_a()) return false;
+		if (!s->get_max_a()) return false;
 		aircraft* a;
 		switch (t)
 		{
@@ -280,7 +280,7 @@ void mission::player_ready() {
 	p2.set_general(param.list[lenhtg_list]);
 	while (flag)
 	{
-		buy_ship(p2, cruiser_t);
+		flag &= buy_ship(p2, cruiser_t);
 		ships2[ships2.size() - 1]->set_coord({ (ships2.size() - 1)%3, (ships2.size() - 1) / 3});
 		buy_ammunations(p2, ships2.size()-1);
 		buy_ship(p2, aircraft_carrier_cruiser);
@@ -294,7 +294,7 @@ void mission::player_ready() {
 		buy_aircraft(p2, fighter_t, ships2.size() - 1);
 		buy_aircraft(p2, front_bomber_t, ships2.size() - 1);
 		buy_aircraft(p2, bomber_t, ships2.size() - 1);
-		flag &= buy_aircraft(p2, bomber_t, ships2.size() - 1);
+		buy_aircraft(p2, bomber_t, ships2.size() - 1);
 	}
 }
 
@@ -368,6 +368,20 @@ std::string mission::print_if(const ships t) noexcept {
 		}
 	}
 	return str;;
+}
+
+int mission::GetSize(const player& p) const noexcept {
+	if (p.affilation) {
+		return ships1.size();
+	}
+	return ships2.size();
+}
+
+std::shared_ptr<ship> mission::GetShip(const player& p, const int i) noexcept {
+	if (p.affilation) {
+		return ships1[i];
+	}
+	return ships2[i];
 }
 
 /*
@@ -509,7 +523,7 @@ int player::get_money() const noexcept {
 	return this->money;
 }
 
-Map::Map(const std::pair<int, int> s, bool random = false) noexcept
+Mapp::Mapp(const std::pair<int, int> s, bool random = false) noexcept
 : size(s) {
 	if (random)
 	{
@@ -519,8 +533,8 @@ Map::Map(const std::pair<int, int> s, bool random = false) noexcept
 			for (int j = 0; j < s.second; j++)
 			{
 				cell c = { i, j };
-				if (mine::random(10) > 6 &&
-					(i > 6 && i < (size.first-6) && j > 6 && j < (size.second - 6)))
+				if (mine::random(20) > 13 &&
+					(i > 3 && i < (size.first-3) && j > 3 && j < (size.second - 3)))
 					c.set_state(ground);
 				v.push_back(c);
 			}
@@ -540,12 +554,12 @@ Map::Map(const std::pair<int, int> s, bool random = false) noexcept
 	}
 }
 
-std::vector <cell>& Map::operator[](const int i) {
+std::vector <cell>& Mapp::operator[](const int i) {
 	if (i > size.first) throw std::exception("incorrect argument");
 	return array[i];
 }
 
-std::vector<cell*> Map::get_way(const cell& from, const cell& to) noexcept {
+std::vector<cell*> Mapp::get_way(const cell& from, const cell& to) noexcept {
 	std::vector<cell*> way;
 	auto current_cell = &from;
 
@@ -584,7 +598,7 @@ std::vector<cell*> Map::get_way(const cell& from, const cell& to) noexcept {
 	return way;
 }
 
-std::vector<cell*> Map::get_way_for_air(const cell& from, const cell& to) noexcept {
+std::vector<cell*> Mapp::get_way_for_air(const cell& from, const cell& to) noexcept {
 	std::vector<cell*> way;
 	auto current_cell = &from;
 
@@ -623,7 +637,7 @@ std::vector<cell*> Map::get_way_for_air(const cell& from, const cell& to) noexce
 	return way;
 }
 
-void Map::move(ship& s, cell& to) noexcept {
+void Mapp::move(ship& s, cell& to) noexcept {
 	if (!s.activate) return;
 	auto coord = s.get_coord();
 	auto from = (*this)[coord.first][coord.second];
@@ -640,7 +654,7 @@ void Map::move(ship& s, cell& to) noexcept {
 	}
 }
 
-void Map::move(aircraft& a, cell& to) noexcept {
+void Mapp::move(aircraft& a, cell& to) noexcept {
 	if (!a.activate) return;
 	auto coord = a.get_coord();
 	auto from = (*this)[coord.first][coord.second];
@@ -659,6 +673,7 @@ void Map::move(aircraft& a, cell& to) noexcept {
 
 cell::cell(const int x, const int y) noexcept : coord({x, y}) {
 	this->state = free_st;
+	this->sprite_ = nullptr;
 }
 
 void cell::set_state(const states s) noexcept {

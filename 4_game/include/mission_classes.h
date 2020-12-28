@@ -104,20 +104,21 @@ public:
 
 	states state;						///< состояние ячейки
 	const std::pair<int, int> coord;	///< координаты ячейки
+	cocos2d::Sprite* sprite_;
 };
 
 /// класс игровой карты
-class Map
+class Mapp
 {
 public:
-	Map() noexcept {};
+	Mapp() noexcept {};
 	/**
 Конструктор
 \param[in] c размер карты
 \param[in] a рандомнсть
 */
-	Map(const std::pair<int, int> c, const bool a) noexcept;
-	~Map() noexcept {};
+	Mapp(const std::pair<int, int> c, const bool a) noexcept;
+	~Mapp() noexcept {};
 	std::vector <cell>& operator[](const int i);
 	std::vector<cell*> get_way(const cell& from, const cell& to) noexcept;
 	std::vector<cell*> get_way_for_air(const cell& from, const cell& to) noexcept;
@@ -164,10 +165,13 @@ public:
 	int GetLastId() const noexcept {
 		return ships1.GetLastId();
 	}
+	int GetSize(const player& p) const noexcept;
+	std::shared_ptr<ship> GetShip(const player& p, const int i) noexcept;
 
-	player p1;			///< пользователь
-	player p2;			///< бот
-	Map	arena;			///< игровая карта
+	player p1;					///< пользователь
+	player p2;					///< бот
+	Mapp arena;					///< игровая карта
+	std::vector<aircraft*> air;	///< массив активных самолетов
 
 protected:
 	int lenhtg_list;	///< количесвто незанятых командиров

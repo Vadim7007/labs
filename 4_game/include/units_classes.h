@@ -6,8 +6,10 @@
 
 #pragma once
 
+#include "cocos2d.h"
 #include "my_stdlib.h"
 #include "container.h"
+
 
 /// возможные виды кораблей
 enum ships
@@ -144,6 +146,7 @@ public:
 	bool activate;			///< флаг активации объекта в данный момент
 	const bool affiliation;	///< принадлежность пользователю
 	friend class weapon;
+	cocos2d::Sprite* sprite_;
 
 protected:
 	/// виртуальный метод загрузки оружия по умолчанию

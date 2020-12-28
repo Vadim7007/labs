@@ -6,6 +6,8 @@
 
 USING_NS_CC;
 
+mission* Game_scene::ptr;
+
 Scene* Ready_scene::createScene()
 {
     return Ready_scene::create();
@@ -158,6 +160,7 @@ void Ready_scene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d
         break;
     }
     case cocos2d::EventKeyboard::KeyCode::KEY_ENTER: {
+        ::Game_scene::ptr = ptr;
         Director::getInstance()->replaceScene(::Game_scene::createScene());
         break;
     }

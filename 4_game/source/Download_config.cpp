@@ -13,9 +13,9 @@ void default_download(config& c0, param_mission& p0, mode_mission& m0) {
 
 	p0.difficult = 1;
 	p0.goal = 10000;
-	p0.max_ship = 30;
+	p0.max_ship = 28;
 	p0.money = 15000;
-	p0.size = { 100, 100 };
+	p0.size = { 40, 30 };
 	p0.visibility = 10;
 	p0.list = { {"Ivan Petrov", "major"}, {"Nikita Ivanov", "captain"},
 		{"Petr Nikitin", "admiral"}, {"Danil Saturday", "sergant"},

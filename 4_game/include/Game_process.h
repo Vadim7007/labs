@@ -11,7 +11,18 @@ public:
 
     void update(float delta);
 
+    int interpritation_x(const int x);
+    int interpritation_y(const int y);
+
+    void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+    void onMouseDown(cocos2d::Event *event);
+
+    cocos2d::EventListenerKeyboard* listener_k;
+    cocos2d::EventListenerMouse* _mouseListener;
+
+    cocos2d::Label* label_damage;
+    
     static mission* ptr;
 
-    CREATE_FUNC(Ready_scene);
+    CREATE_FUNC(Game_scene);
 };

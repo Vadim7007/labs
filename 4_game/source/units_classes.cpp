@@ -11,6 +11,7 @@ object::object(const struct config& p, const bool a) noexcept : affiliation(a) {
 	this->ammo[heavy] = 0;
 	this->action = 3;
 	this->destroyed = false;
+	this->sprite_ = nullptr;
 };
 
 void object::modificate(const modificated_parametrs& m) noexcept{
@@ -225,6 +226,7 @@ void ship::attack(aircraft& a) noexcept {
 aircraft* ship::use_air(aircrafts a)noexcept {
 	if (!this->own_aircrafts[a].empty()) {
 		aircraft* i = new aircraft(this->own_aircrafts[a][0]);
+		i->activate = true;
 		this->own_aircrafts[a].pop_front();
 		this->decrease_action();
 		i->decrease_action();
@@ -303,6 +305,7 @@ int ship::get_a() const noexcept {
 	}
 	return size;
 }
+
 aircraft::aircraft(const struct config& p, const bool a,
 				   const aircrafts t, const int r, ship* const s) noexcept
 	: object(p, a), type(t), refueling(r) {
@@ -312,7 +315,7 @@ aircraft::aircraft(const struct config& p, const bool a,
 	this->param.p_o[type].range = 3*this->param.p_o[0].range;
 	this->param.p_o[type].speed = 3*this->param.p_o[type].speed;
 	this->param.p_o[type].storage = 0;
-
+	this->activate = false;
 	this->hp = this->param.p_o[type].HP;
 };
 
@@ -329,6 +332,7 @@ aircraft::aircraft(aircraft&& a) noexcept : object(a.param, a.affiliation),
 	this->hp = a.hp;
 	this->param = a.param;
 	this->sum_costs = a.sum_costs;
+	this->activate = false;
 }
 
 aircraft::aircraft(const aircraft& a) noexcept : object(a.param, a.affiliation),
@@ -344,6 +348,7 @@ type(a.type), refueling(a.refueling) {
 	this->hp = a.hp;
 	this->param = a.param;
 	this->sum_costs = a.sum_costs;
+	this->activate = false;
 }
 
 bool aircraft::correct() noexcept {
@@ -415,6 +420,7 @@ void aircraft::return_back() noexcept {
 	this->goal = s->get_coord();
 
 	if (distance(*this, *s) < 2) {
+		this->activate = false;
 		s->add_aircraft(this);
 		this->decrease_action();
 	}
