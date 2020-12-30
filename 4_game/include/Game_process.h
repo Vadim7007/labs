@@ -8,6 +8,7 @@ class Game_scene : public cocos2d::Scene {
 public:
     static cocos2d::Scene* createScene();
     virtual bool init();
+    void winScene();
 
     void update(float delta);
 
@@ -19,6 +20,8 @@ public:
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     void onMouseDown(cocos2d::Event *event);
     void onMouseDownMA(cocos2d::Event* event, cell& c);
+    void onKeyReleasedFinish(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
+
     void ActionShip(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event,
         std::shared_ptr<ship> s);
     void ActionAircraft(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event,
@@ -38,6 +41,7 @@ public:
     cocos2d::Label* label_damage;
     
     static mission* ptr;
+    bool win = false;
 
     CREATE_FUNC(Game_scene);
 };

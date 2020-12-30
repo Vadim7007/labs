@@ -43,10 +43,10 @@ void default_download(config& c0, param_mission& p0, mode_mission& m0) {
 	c0.c_p_w[0].max_ammunation = 250;
 	c0.c_p_w[1].max_ammunation = 150;
 	c0.c_p_w[2].max_ammunation = 100;
-	c0.p_o[0].HP = 550;
+	c0.p_o[0].HP = 1550;
 	c0.p_o[1].HP = 400;
 	c0.p_o[2].HP = 650;
-	c0.p_o[0].range = 3;
+	c0.p_o[0].range = 13;
 	c0.p_o[1].range = 2;
 	c0.p_o[2].range = 2;
 	c0.p_o[0].speed = 3;
@@ -63,7 +63,7 @@ void default_download(config& c0, param_mission& p0, mode_mission& m0) {
 	c0.p_s[2].max_weapon = 4;
 	c0.p_w[0].damage = 2;
 	c0.p_w[1].damage = 8;
-	c0.p_w[2].damage = 30;
+	c0.p_w[2].damage = 130;
 	c0.p_w[0].radius = 1;
 	c0.p_w[1].radius = 1;
 	c0.p_w[2].radius = 2;
@@ -175,7 +175,6 @@ bool download_mode(mode_mission& m) {
 	}
 	return true;
 }
-
 
 /*
 возвращает false, если загружены значения по умолчанию

@@ -231,6 +231,19 @@ aircraft* ship::use_air(aircrafts a)noexcept {
 		this->own_aircrafts[a].pop_front();
 		this->decrease_action();
 		i->decrease_action();
+		if (mine::random(2) < -1) {
+			i->set_current_coord({ this->get_coord().first + 1, this->get_coord().second });
+		}
+		else if(mine::random(2) < 0)
+		{
+			i->set_current_coord({ this->get_coord().first, this->get_coord().second-1 });
+		}
+		else if(mine::random(2) < 1){
+			i->set_current_coord({ this->get_coord().first + 1, this->get_coord().second-1 });
+		}
+		else {
+			i->set_current_coord({ this->get_coord().first + 1, this->get_coord().second + 1 });
+		}
 		return i;
 	}
 return nullptr;

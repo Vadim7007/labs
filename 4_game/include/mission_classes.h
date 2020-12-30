@@ -144,6 +144,11 @@ public:
 	const struct param_mission param;	///< параметры игры
 	const struct mode_mission mode;		///< параметры для настройки режима игры
 	const struct config conf;			///< параметры юнитов
+	player p1;							///< пользователь
+	player p2;							///< бот
+	Mapp arena;							///< игровая карта
+	std::vector<aircraft*> air;			///< массив активных самолетов
+	bool win_player;					///< если true, то победа игрока, инача false
 
 	std::shared_ptr<ship> GetById(const player& p, const int id) noexcept;
 	std::shared_ptr<ship> GetByCoord(cell& c) noexcept;
@@ -169,11 +174,6 @@ public:
 	}
 	int GetSize(const player& p) const noexcept;
 	std::shared_ptr<ship> GetShip(const player& p, const int i) noexcept;
-
-	player p1;					///< пользователь
-	player p2;					///< бот
-	Mapp arena;					///< игровая карта
-	std::vector<aircraft*> air;	///< массив активных самолетов
 
 protected:
 	int lenhtg_list;	///< количесвто незанятых командиров

@@ -180,6 +180,9 @@ bool mission::end_turn() {
 
 		// проверить на уничтожение
 		if (ships1[i]->destroyed) {
+			ships1[i]->sprite_->setTexture(
+				"C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/destroy.jpg"
+			);
 			if(ships1[i]->get_commander() == this->p1.get_general()){
 				this->general_death(p1);
 			}
@@ -187,6 +190,8 @@ bool mission::end_turn() {
 			auto coord = ships1[i]->get_coord();
 			this->arena[coord.first][coord.second].set_state(free_st);
 			ships1.del_ship(ships1[i]->get_name());
+			i--;
+			k--;
 		}
 	}
 	k = ships2.size();
@@ -194,6 +199,9 @@ bool mission::end_turn() {
 	{
 		ships2[i]->correct();
 		if (ships2[i]->destroyed) {
+			ships2[i]->sprite_->setTexture(
+				"C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/destroy.jpg"
+			);
 			if (ships2[i]->get_commander() == this->p2.get_general()) {
 				this->general_death(p2);
 			}
@@ -201,24 +209,29 @@ bool mission::end_turn() {
 			auto coord = ships2[i]->get_coord();
 			this->arena[coord.first][coord.second].set_state(free_st);
 			ships2.del_ship(ships2[i]->get_name());
+			i--;
+			k--;
 		}
 	}
 
 	bool win = false;
+	win_player = false;
 	// если корабли достигли контрольной точки
 	for (size_t i = 0; i < ships2.size(); i++)
 	{
 		win = true;
-		if (!((ships2[i]->get_coord().first > param.size.first - 7) &&
-			(ships2[i]->get_coord().second > param.size.second - 7))) {
+		if (!((ships2[i]->get_coord().first > param.size.first - 5) &&
+			(ships2[i]->get_coord().second > param.size.second - 5))) {
 			win = false;
 			break;
 		}
 	}
 	// если кораблей где-то не осталось
 	win |= (!ships1.size() || !ships2.size());
+	if (!ships2.size()) win_player = true;
 	// если достигнута сумма уничтоженного
 	win |= (p1.get_damage() > param.goal || p2.get_damage() > param.goal);
+	if (p1.get_damage() > param.goal) win_player = true;
 	if (win) {
 		return true;
 	}
@@ -234,6 +247,21 @@ bool mission::end_turn() {
 	for (int i = 0; i < k; i++)
 	{
 		ships2[i]->recovery();
+	}
+
+	//  проверка всех активных самолетов
+	for (auto a : air) {
+		if (a->get_hp() <= 0) {
+			a->sprite_->setTexture(
+				"C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/destroy.jpg"
+			);
+			a->activate = false;
+			auto coord = a->get_coord();
+			arena[coord.first][coord.second].set_state(free_st);
+		}
+		else {
+			a->recovery();
+		}
 	}
 
 	return false;
@@ -327,12 +355,14 @@ std::shared_ptr<ship> mission::GetByCoord(cell& c) noexcept {
 			return ships1[i];
 		}
 	}
+	
 	for (size_t i = 0; i < ships2.size(); i++)
 	{
 		if (ships2[i]->get_coord() == c.coord) {
 			return ships2[i];
 		}
 	}
+	
 	return nullptr;
 }
 
@@ -668,8 +698,8 @@ std::vector<cell*> Mapp::get_way_for_air(const cell& from, const cell& to) noexc
 			}
 		}
 
-		int vec_x = to.coord.first - current_cell->coord.first;
-		int vec_y = to.coord.first - current_cell->coord.second;
+		vec_x = to.coord.first - current_cell->coord.first;
+		vec_y = to.coord.second - current_cell->coord.second;
 	}
 	return way;
 }

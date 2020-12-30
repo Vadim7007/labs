@@ -103,29 +103,31 @@ bool Game_scene::init()
 }
 
 void Game_scene::update(float delta) {
-    for (size_t i = 0; i < ptr->GetSize(ptr->p1); i++)
-    {
-        auto s = ptr->GetShip(ptr->p1, i);
-        s->sprite_->setPosition(Vec2(
-            interpritation_x(s->get_coord().first),
-            interpritation_y(s->get_coord().second)));
+    if (!win) {
+        for (size_t i = 0; i < ptr->GetSize(ptr->p1); i++)
+        {
+            auto s = ptr->GetShip(ptr->p1, i);
+            s->sprite_->setPosition(Vec2(
+                interpritation_x(s->get_coord().first),
+                interpritation_y(s->get_coord().second)));
+        }
+        for (size_t i = 0; i < ptr->GetSize(ptr->p2); i++)
+        {
+            auto s = ptr->GetShip(ptr->p2, i);
+            s->sprite_->setPosition(Vec2(
+                interpritation_x(s->get_coord().first),
+                interpritation_y(s->get_coord().second)));
+        }
+        for (size_t i = 0; i < ptr->air.size(); i++)
+        {
+            auto a = ptr->air[i];
+            a->sprite_->setPosition(Vec2(
+                interpritation_x(a->get_coord().first),
+                interpritation_y(a->get_coord().second)));
+        }
+        std::string str = std::to_string(ptr->p1.get_damage());
+        this->label_damage->setString(str);
     }
-    for (size_t i = 0; i < ptr->GetSize(ptr->p2); i++)
-    {
-        auto s = ptr->GetShip(ptr->p2, i);
-        s->sprite_->setPosition(Vec2(
-            interpritation_x(s->get_coord().first),
-            interpritation_y(s->get_coord().second)));
-    }
-    for (size_t i = 0; i < ptr->air.size(); i++)
-    {
-        auto a = ptr->air[i];
-        a->sprite_->setPosition(Vec2(
-            interpritation_x(a->get_coord().first),
-            interpritation_y(a->get_coord().second)));
-    }
-    std::string str = std::to_string(ptr->p1.get_damage());
-    this->label_damage->setString(str);
 }
 
 void Game_scene::onMouseDown(Event* event) {
@@ -136,11 +138,15 @@ void Game_scene::onMouseDown(Event* event) {
         _mouseListener->onMouseDown = CC_CALLBACK_1(Game_scene::onMouseDownMA, this, c);
         auto s = ptr->GetByCoord(c);
         if ((bool)s) {
-            this->listener->onKeyReleased = CC_CALLBACK_2(Game_scene::ActionShip, this, s);
+            if (s->affiliation) {
+                this->listener->onKeyReleased = CC_CALLBACK_2(Game_scene::ActionShip, this, s);
+            }
         }
         else {
             auto a = ptr->GetAirByCoord(c);
-            listener->onKeyPressed = CC_CALLBACK_2(Game_scene::ActionAircraft, this, a);
+            if (a->affiliation) {
+                listener->onKeyPressed = CC_CALLBACK_2(Game_scene::ActionAircraft, this, a);
+            }
         }
     }
 }
@@ -153,37 +159,49 @@ void Game_scene::onMouseDownMA(Event* event, cell& c) {
     if (to.state == busy) {
         auto to_s = ptr->GetByCoord(to);
         if ((bool)s) {
-            if ((bool)to_s) {
-                s->attack(*to_s);
-            }
-            else {
-                aircraft* to_a = ptr->GetAirByCoord(to);
-                s->attack(*to_a);
+            if (s->affiliation) {
+                if ((bool)to_s) {
+                    s->attack(*to_s);
+                }
+                else {
+                    aircraft* to_a = ptr->GetAirByCoord(to);
+                    s->attack(*to_a);
+                }
             }
         }
         else {
             auto a = ptr->GetAirByCoord(c);
-            if ((bool)to_s) {
-                a->attack(*to_s);
-            }
-            else {
-                aircraft* to_a = ptr->GetAirByCoord(to);
-                a->attack(*to_a);
+            if (a->affiliation) {
+                if ((bool)to_s) {
+                    a->attack(*to_s);
+                }
+                else {
+                    aircraft* to_a = ptr->GetAirByCoord(to);
+                    a->attack(*to_a);
+                }
             }
         }
     }
 
     else{
         if ((bool)s) {
-            ptr->arena.move(*s, to);
+            if (s->affiliation) {
+                ptr->arena.move(*s, to);
+            }
         }
         else {
             auto a = ptr->GetAirByCoord(c);
-            ptr->arena.move(*a, to);
+            if (a->affiliation) {
+                ptr->arena.move(*a, to);
+            }
         }
     }
     _mouseListener->onMouseDown = CC_CALLBACK_1(Game_scene::onMouseDown, this);
     listener->onKeyPressed = CC_CALLBACK_2(Game_scene::onKeyReleased, this);
+}
+
+void Game_scene::onKeyReleasedFinish(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
+    Director::getInstance()->replaceScene(::Main_scene::create());
 }
 
 void Game_scene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
@@ -193,7 +211,10 @@ void Game_scene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d:
         break;
     }
     case cocos2d::EventKeyboard::KeyCode::KEY_ENTER: {
-        ptr->end_turn();
+        if (ptr->end_turn()) {
+            win = true;
+            winScene();
+        }
         break;
     }
     default:
@@ -203,7 +224,51 @@ void Game_scene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d:
 
 void Game_scene::ActionShip(cocos2d::EventKeyboard::KeyCode keyCode, 
     cocos2d::Event* event, std::shared_ptr<ship> s) {
-
+    aircraft* a;
+    switch (keyCode)
+    {
+    case cocos2d::EventKeyboard::KeyCode::KEY_1:
+        a = s->use_air(fighter_t);
+        if ((bool)a) {
+            a->sprite_ = Sprite::create(
+                "C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/fighter.png"
+            );
+            a->sprite_->setPosition(Vec2(interpritation_x(a->get_coord().first),
+                interpritation_y(a->get_coord().second)));
+            this->addChild(a->sprite_);
+            ptr->air.push_back(a);
+            ptr->arena[a->get_coord().first][a->get_coord().second].set_state(busy);
+        }
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_2:
+        a = s->use_air(front_bomber_t);
+        if ((bool)a) {
+            a->sprite_ = Sprite::create(
+                "C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/front_bomber.png"
+            );
+            a->sprite_->setPosition(Vec2(interpritation_x(a->get_coord().first),
+                interpritation_y(a->get_coord().second)));
+            this->addChild(a->sprite_);
+            ptr->air.push_back(a);
+            ptr->arena[a->get_coord().first][a->get_coord().second].set_state(busy);
+        }
+        break;
+    case cocos2d::EventKeyboard::KeyCode::KEY_3:
+        a = s->use_air(bomber_t);
+        if ((bool)a) {
+            a->sprite_ = Sprite::create(
+                "C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/bomber.png"
+            );
+            a->sprite_->setPosition(Vec2(interpritation_x(a->get_coord().first),
+                interpritation_y(a->get_coord().second)));
+            this->addChild(a->sprite_);
+            ptr->air.push_back(a);
+            ptr->arena[a->get_coord().first][a->get_coord().second].set_state(busy);
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 void Game_scene::ActionAircraft(cocos2d::EventKeyboard::KeyCode keyCode, 
@@ -316,6 +381,53 @@ void Game_scene::display_map() {
             this->addChild(ptr->arena[i][k].sprite_, -1);
         }
     }
+}
+
+void Game_scene::winScene() {
+    this->removeAllChildren();
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    auto label = Label::createWithTTF("Sea War", "fonts/Marker Felt.ttf", 24);
+
+    label->setPosition(Vec2(origin.x + visibleSize.width / 2,
+        origin.y + visibleSize.height - label->getContentSize().height));
+
+    this->addChild(label, 0);
+
+    auto sprite = Sprite::create(
+        "C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/air_carrier_menu.png");
+
+    sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 1.4 + origin.y));
+
+    this->addChild(sprite, -1);
+
+    auto sprite2 = Sprite::create(
+        "C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/sea.jpg");
+
+    sprite2->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+
+    this->addChild(sprite2, -2);
+
+    std::string str;
+    if (ptr->win_player) {
+        str = "Win\n";
+    }
+    else {
+        str = "Defeat\n";
+    }
+    str+="Your score: ";
+    str += std::to_string(ptr->p1.get_damage());
+
+    auto label1 = Label::createWithTTF(str, "fonts/Marker Felt.ttf", 24);
+
+    label1->setPosition(Vec2(origin.x + visibleSize.width / 2,
+        origin.y + visibleSize.height / 2 - label1->getContentSize().height));
+
+    this->addChild(label1, 1);
+
+    listener->onKeyPressed = CC_CALLBACK_2(Game_scene::onKeyReleasedFinish, this);
 }
 
 /*
