@@ -1,6 +1,5 @@
 #pragma once
 
-#include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/Main_scene.h"
 #include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/include/Game_process.h"
 #include <numeric>
 #include <future>
@@ -171,7 +170,7 @@ void Game_scene::onMouseDownMA(Event* event, cell& c) {
         }
         else {
             auto a = ptr->GetAirByCoord(c);
-            if (a->affiliation) {
+            if ((bool)a && a->affiliation) {
                 if ((bool)to_s) {
                     a->attack(*to_s);
                 }

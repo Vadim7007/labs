@@ -1,5 +1,9 @@
 ﻿#include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/include/Download_config.h"
 
+#include <numeric>
+#include <future>
+#include <mutex>
+
 #define PATH1 "/Users/vadim/Desktop/Я/Программирование/study/Lab4/config/config.txt"
 #define PATH2 "/Users/vadim/Desktop/Я/Программирование/study/Lab4/config/param.txt"
 #define PATH3 "/Users/vadim/Desktop/Я/Программирование/study/Lab4/config/mode.txt"
@@ -181,16 +185,17 @@ bool download_mode(mode_mission& m) {
 возвращает true, если загружены значения из конфигурационных файлов
 */
 bool download_info(config& c, param_mission& p, mode_mission& m) {
+	std::future<bool>cf = std::async([&] {return download_config(c); });
+	std::future<bool>pf = std::async([&] {return download_param(p); });
+	std::future<bool>mf = std::async([&] {return download_mode(m); });
+
 	config c0;
 	param_mission p0;
 	mode_mission m0;
 
 	default_download(c0, p0, m0);
 
-	bool flag = download_config(c);
-	flag &= download_param(p);
-	flag &= download_mode(m);
-
+	bool flag = cf.get() && pf.get() && mf.get();
 	if (!flag)
 	{
 		c = c0;

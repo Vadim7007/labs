@@ -7,6 +7,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 #include "my_stdlib.h"
 #include "container.h"
 

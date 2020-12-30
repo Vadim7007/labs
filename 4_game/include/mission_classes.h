@@ -101,6 +101,7 @@ public:
 	cell(const int x, const int y) noexcept;
 	~cell() noexcept {};
 	void set_state(const states s) noexcept;
+	cell& operator = (const cell& c) noexcept;
 
 	states state;						///< состояние ячейки
 	const std::pair<int, int> coord;	///< координаты ячейки
@@ -124,6 +125,7 @@ public:
 	std::vector<cell*> get_way_for_air(const cell& from, const cell& to) noexcept;
 	void move(ship& s, cell& to) noexcept;
 	void move(aircraft& a, cell& to) noexcept;
+	void fill(const int from, const int to, const int size, const bool random) noexcept;
 
 protected:
 	std::vector<std::vector<cell>> array;	///< массив ячеек карты

@@ -590,35 +590,48 @@ int player::get_money() const noexcept {
 	return this->money;
 }
 
-Mapp::Mapp(const std::pair<int, int> s, bool random = false) noexcept
-: size(s) {
+void Mapp::fill(const int from, const int to, const int size, 
+	const bool random) noexcept {
 	if (random)
 	{
-		for (int i = 0; i < s.first; i++)
+		for (int i = from; i < to; i++)
 		{
 			std::vector<cell> v;
-			for (int j = 0; j < s.second; j++)
+			for (int j = 0; j < size; j++)
 			{
 				cell c = { i, j };
-				if (mine::random(20) > 13 &&
-					(i > 3 && i < (size.first-3) && j > 3 && j < (size.second - 3)))
+				if (mine::random(20) > 14 &&
+					(i > 3 && j > 3 && j < (size - 3)))
 					c.set_state(ground);
 				v.push_back(c);
 			}
-			this->array.push_back(v);
+			this->array[i] = v;
 		}
 	}
 	else {
-		for (int i = 0; i < s.first; i++)
+		for (int i = from; i < to; i++)
 		{
 			std::vector<cell> v;
-			for (int j = 0; j < s.second; j++)
+			for (int j = 0; j < size; j++)
 			{
-				v.push_back({i, j});
+				v.push_back({ i, j });
 			}
-			this->array.push_back(v);
+			this->array[i] = v;
 		}
 	}
+}
+
+Mapp::Mapp(const std::pair<int, int> s, bool random = false) noexcept
+: size(s) {
+	this->array.resize(s.first);
+	int page = s.first / 3;
+	std::future<void>p1 = std::async([&] {fill(0, page, s.second, random); });
+	std::future<void>p2 = std::async([&] {fill(page, 2*page, s.second, random); });
+	std::future<void>p3 = std::async([&] {fill(2*page, 3*page, s.second, random); });
+	fill(3 * page, s.first, s.second, random);
+	p1.get();
+	p2.get();
+	p3.get();
 }
 
 std::vector <cell>& Mapp::operator[](const int i) {
@@ -745,4 +758,11 @@ cell::cell(const int x, const int y) noexcept : coord({x, y}) {
 
 void cell::set_state(const states s) noexcept {
 	this->state = s;
+}
+
+cell& cell::operator = (const cell& c) noexcept {
+	cell nw(c.coord.first, c.coord.second);
+	nw.state = c.state;
+	nw.sprite_ = c.sprite_;
+	return nw;
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "cocos2d.h"
-#include "ui/CocosGUI.h"
 #include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/include/Download_config.h"
+#include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/Main_scene.h"
+#include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/include/Game_process.h"
 
 class Ready_scene: public cocos2d::Scene {
 public:

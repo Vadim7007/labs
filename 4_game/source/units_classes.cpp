@@ -134,7 +134,7 @@ bool ship::correct() noexcept {
 void ship::recovery() noexcept {
 	// для корабля
 	this->action = 3;
-	this->hp += this->param.p_o[this->type].HP / 20;
+	this->hp += this->param.p_o[this->type].HP / 30;
 
 	// для его самолетов
 	for (int i = 0; i < 3; i++)
@@ -198,6 +198,10 @@ void ship::attack(ship& s) noexcept {
 		if (flag) {
 			this->action -= 2;
 			s.correct();
+			auto rotateBy1 = cocos2d::RotateBy::create(0.2f, 20.0f);
+			auto rotateBy2 = cocos2d::RotateBy::create(0.4f, -40.0f);
+			auto seq = cocos2d::Sequence::create(rotateBy1, rotateBy2, rotateBy1, nullptr);
+			s.sprite_->runAction(seq);
 		}
 	}
 	return;
@@ -218,6 +222,10 @@ void ship::attack(aircraft& a) noexcept {
 		if (flag) {
 			this->action -= 1;
 			a.correct();
+			auto rotateBy1 = cocos2d::RotateBy::create(0.2f, 20.0f);
+			auto rotateBy2 = cocos2d::RotateBy::create(0.4f, -40.0f);
+			auto seq = cocos2d::Sequence::create(rotateBy1, rotateBy2, rotateBy1, nullptr);
+			a.sprite_->runAction(seq);
 		}
 	}
 	return;
@@ -394,6 +402,10 @@ void aircraft::attack(aircraft& a) noexcept {
 			}
 			this->action -= 2;
 			a.correct();
+			auto rotateBy1 = cocos2d::RotateBy::create(0.2f, 20.0f);
+			auto rotateBy2 = cocos2d::RotateBy::create(0.4f, -40.0f);
+			auto seq = cocos2d::Sequence::create(rotateBy1, rotateBy2, rotateBy1, nullptr);
+			a.sprite_->runAction(seq);
 		}
 	}
 	return;
@@ -414,7 +426,10 @@ void aircraft::attack(ship& s) noexcept {
 				return;
 			}
 			s.correct();
-			this->action -= 2;
+			auto rotateBy1 = cocos2d::RotateBy::create(0.2f, 20.0f);
+			auto rotateBy2 = cocos2d::RotateBy::create(0.4f, -40.0f);
+			auto seq = cocos2d::Sequence::create(rotateBy1, rotateBy2, rotateBy1, nullptr);
+			s.sprite_->runAction(seq);
 		}
 	}
 	return;

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/include/Ready_scene.h"
-#include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/Main_scene.h"
-#include "/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/include/Game_process.h"
 
 USING_NS_CC;
 
@@ -211,8 +209,8 @@ void Ready_scene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d
 
 void Ready_scene::onKeyReleasedM(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
 
-    std::string str = "0 - HP\n1 -speed\n3 - range\n4 - storage\n5 - max_weapon";
-                str +="\n6 - max_aircraft\n7 -Damage\n8 - Rate";
+    std::string str = "0 - HP\n1 -speed\n2 - range\n3 - storage\n4 - max_weapon";
+                str +="\n5 - max_aircraft\n6 - Radius\n7 -Damage\n8 - Rate";
     this->label_help->setString(str);
 
     switch (keyCode) {
