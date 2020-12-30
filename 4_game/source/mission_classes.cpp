@@ -22,11 +22,11 @@ bool mission::buy_ship(player& pl, ships t){
 		std::string name = "Ship" + std::to_string(this->lenhtg_list);
 		if (pl.affilation)
 		{
-			this->ships1.add_ship(conf, true, t,
+			this->ships1.add_ship(conf, pl.affilation, t,
 				std::move(this->get_commander()), std::move(name));
 		}
 		else {
-			this->ships2.add_ship(conf, false, t,
+			this->ships2.add_ship(conf, pl.affilation, t,
 				std::move(this->get_commander()), std::move(name));
 		}
 		return true;
@@ -184,8 +184,9 @@ bool mission::end_turn() {
 				this->general_death(p1);
 			}
 			this->p2.increase_damage(ships1[i]->get_cost());
+			auto coord = ships1[i]->get_coord();
+			this->arena[coord.first][coord.second].set_state(free_st);
 			ships1.del_ship(ships1[i]->get_name());
-			continue;
 		}
 	}
 	k = ships2.size();
@@ -197,8 +198,9 @@ bool mission::end_turn() {
 				this->general_death(p2);
 			}
 			this->p1.increase_damage(ships2[i]->get_cost());
+			auto coord = ships2[i]->get_coord();
+			this->arena[coord.first][coord.second].set_state(free_st);
 			ships2.del_ship(ships2[i]->get_name());
-			continue;
 		}
 	}
 
@@ -239,37 +241,48 @@ bool mission::end_turn() {
 
 void mission::player_turn() {
 	int min = ships2[0]->get_range();
-	for (size_t i = 0; i < ships2.size(); i++)
+	for (int a = 0; a < 2; a++)
 	{
-		min = std::min(min, ships2[i]->get_range());
-	}
-	if (mine::random(2) > -2) {
 		for (size_t i = 0; i < ships2.size(); i++)
 		{
-			// атака
-			for (size_t j = 0; j < ships1.size(); j++)
-			{
-				ships2[i]->attack(*ships1[j]);
-			}
-
-			// перемещение
-			int x = ships2[i]->get_coord().first;
-			int y = ships2[i]->get_coord().second;
-			this->arena.move(*ships2[i], arena[x + min / 2][y + min / 2]);
+			min = std::min(min, ships2[i]->get_range());
 		}
-	}
-	else {
-		for (size_t i = 0; i < ships2.size(); i++)
-		{
-			// перемещение
-			int x = ships2[i]->get_coord().first;
-			int y = ships2[i]->get_coord().second;
-			this->arena.move(*ships2[i], arena[x + min / 2][y + min / 2]);
-			
-			// атака
-			for (size_t j = 0; j < ships1.size(); j++)
+		if (mine::random(2) > -2) {
+			for (size_t i = 0; i < ships2.size(); i++)
 			{
-				ships2[i]->attack(*ships1[j]);
+				// атака
+				for (size_t j = 0; j < ships1.size(); j++)
+				{
+					ships2[i]->attack(*ships1[j]);
+				}
+
+				// перемещение
+				int x = ships2[i]->get_coord().first;
+				int y = ships2[i]->get_coord().second;
+				x += min / 2;
+				y += min / 2;
+				if (x > param.size.first - 1) x = param.size.first - 1;
+				if (y > param.size.second - 1) y = param.size.second - 1;
+				this->arena.move(*ships2[i], arena[x][y]);
+			}
+		}
+		else {
+			for (size_t i = 0; i < ships2.size(); i++)
+			{
+				// перемещение
+				int x = ships2[i]->get_coord().first;
+				int y = ships2[i]->get_coord().second;
+				x += min / 2;
+				y += min / 2;
+				if (x > param.size.first - 1) x = param.size.first - 1;
+				if (y > param.size.second - 1) y = param.size.second - 1;
+				this->arena.move(*ships2[i], arena[x][y]);
+
+				// атака
+				for (size_t j = 0; j < ships1.size(); j++)
+				{
+					ships2[i]->attack(*ships1[j]);
+				}
 			}
 		}
 	}
@@ -316,9 +329,17 @@ std::shared_ptr<ship> mission::GetByCoord(cell& c) noexcept {
 	}
 	for (size_t i = 0; i < ships2.size(); i++)
 	{
-		if (ships1[i]->get_coord() == c.coord) {
-			return ships1[i];
+		if (ships2[i]->get_coord() == c.coord) {
+			return ships2[i];
 		}
+	}
+	return nullptr;
+}
+
+aircraft* mission::GetAirByCoord(cell& c) const noexcept {
+	for (size_t i = 0; i < air.size(); i++)
+	{
+		if (c.coord == air[i]->get_coord()) return air[i];
 	}
 	return nullptr;
 }
@@ -609,7 +630,7 @@ std::vector<cell*> Mapp::get_way(const cell& from, const cell& to) noexcept {
 		}
 
 		vec_x = to.coord.first - current_cell->coord.first;
-		vec_y = to.coord.first - current_cell->coord.second;
+		vec_y = to.coord.second - current_cell->coord.second;
 	}	
 	return way;
 }

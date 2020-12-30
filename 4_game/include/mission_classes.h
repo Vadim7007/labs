@@ -147,6 +147,7 @@ public:
 
 	std::shared_ptr<ship> GetById(const player& p, const int id) noexcept;
 	std::shared_ptr<ship> GetByCoord(cell& c) noexcept;
+	aircraft* GetAirByCoord(cell& c) const noexcept;
 	bool buy_ship(player& p, ships t);
 	void sell_ship(player& pl, const int index);
 	bool buy_aircraft(player& p, aircrafts t, const int index);

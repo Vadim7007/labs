@@ -18,16 +18,20 @@ public:
 
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
     void onMouseDown(cocos2d::Event *event);
-    void onMouseDownM(cocos2d::Event* event, cell& c);
-    /*
+    void onMouseDownMA(cocos2d::Event* event, cell& c);
+    void ActionShip(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event,
+        std::shared_ptr<ship> s);
+    void ActionAircraft(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event,
+        aircraft* a);
+
     void display_map();
     void display_unit1();
     void display_unit2();
-    */
+    /*
     friend void display_map(Scene* sc);
     friend void display_unit1(Scene* sc);
     friend void display_unit2(Scene* sc);
-
+    */
     cocos2d::EventListenerKeyboard* listener;
     cocos2d::EventListenerMouse* _mouseListener;
 

@@ -8,7 +8,6 @@
 
 USING_NS_CC;
 
-
 Scene* Game_scene::createScene()
 {
     return Game_scene::create();
@@ -26,12 +25,22 @@ int interpritation_y(const int y) {
 
 int interpritation_x_1(const int x_p) {
     auto visibleSize = Director::getInstance()->getVisibleSize();
-    return (x_p - 21) / ((visibleSize.width - 21) / ::Game_scene::ptr->param.size.first);
+    int x = round((x_p - 21) /
+        (float)((visibleSize.width - 21) / ::Game_scene::ptr->param.size.first));
+    if (x < 0) return 0;
+    if (x > ::Game_scene::ptr->param.size.first - 1) return
+        ::Game_scene::ptr->param.size.first - 1;
+    return x;
 }
 
 int interpritation_y_1(const int y_p) {
     auto visibleSize = Director::getInstance()->getVisibleSize();
-    return (y_p - 20) / ((visibleSize.height - 21) / ::Game_scene::ptr->param.size.second);
+    int y = round((y_p - 20) 
+        / (float)((visibleSize.height - 21) / ::Game_scene::ptr->param.size.second));
+    if (y < 0) return 0;
+    if (y > ::Game_scene::ptr->param.size.second - 1) return
+        ::Game_scene::ptr->param.size.second - 1;
+    return y;
 }
 
 bool Game_scene::init()
@@ -57,9 +66,9 @@ bool Game_scene::init()
     std::future<void> u2 = std::async([&] {display_unit2(this); });
     */
     
-    display_map(this);
-    display_unit1(this);
-    display_unit2(this);
+    display_map();
+    display_unit1();
+    display_unit2();
 
     auto sprite_back = Sprite::create(
         "C:/Users/vadim/Desktop/Me/Programming/study/cocos_l4/MyGame/proj.win32/png/sea.jpg");
@@ -124,16 +133,57 @@ void Game_scene::onMouseDown(Event* event) {
     cell c = ptr->arena[interpritation_x_1(e->getCursorX())]
         [interpritation_y_1(e->getCursorY())];
     if (c.state == busy) {
-        _mouseListener->onMouseDown = CC_CALLBACK_1(Game_scene::onMouseDownM, this, c);
+        _mouseListener->onMouseDown = CC_CALLBACK_1(Game_scene::onMouseDownMA, this, c);
+        auto s = ptr->GetByCoord(c);
+        if ((bool)s) {
+            this->listener->onKeyReleased = CC_CALLBACK_2(Game_scene::ActionShip, this, s);
+        }
+        else {
+            auto a = ptr->GetAirByCoord(c);
+            listener->onKeyPressed = CC_CALLBACK_2(Game_scene::ActionAircraft, this, a);
+        }
     }
 }
 
-void Game_scene::onMouseDownM(Event* event, cell& c) {
-    auto o = ptr->GetByCoord(c);
+void Game_scene::onMouseDownMA(Event* event, cell& c) {
     EventMouse* e = (EventMouse*)event;
     cell to = ptr->arena[interpritation_x_1(e->getCursorX())]
         [interpritation_y_1(e->getCursorY())];
-    ptr->arena.move(*o, to);
+    auto s = ptr->GetByCoord(c);
+    if (to.state == busy) {
+        auto to_s = ptr->GetByCoord(to);
+        if ((bool)s) {
+            if ((bool)to_s) {
+                s->attack(*to_s);
+            }
+            else {
+                aircraft* to_a = ptr->GetAirByCoord(to);
+                s->attack(*to_a);
+            }
+        }
+        else {
+            auto a = ptr->GetAirByCoord(c);
+            if ((bool)to_s) {
+                a->attack(*to_s);
+            }
+            else {
+                aircraft* to_a = ptr->GetAirByCoord(to);
+                a->attack(*to_a);
+            }
+        }
+    }
+
+    else{
+        if ((bool)s) {
+            ptr->arena.move(*s, to);
+        }
+        else {
+            auto a = ptr->GetAirByCoord(c);
+            ptr->arena.move(*a, to);
+        }
+    }
+    _mouseListener->onMouseDown = CC_CALLBACK_1(Game_scene::onMouseDown, this);
+    listener->onKeyPressed = CC_CALLBACK_2(Game_scene::onKeyReleased, this);
 }
 
 void Game_scene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event) {
@@ -150,7 +200,17 @@ void Game_scene::onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d:
         break;
     }
 }
-/*
+
+void Game_scene::ActionShip(cocos2d::EventKeyboard::KeyCode keyCode, 
+    cocos2d::Event* event, std::shared_ptr<ship> s) {
+
+}
+
+void Game_scene::ActionAircraft(cocos2d::EventKeyboard::KeyCode keyCode, 
+    cocos2d::Event* event, aircraft* a) {
+
+}
+
 void Game_scene::display_unit1() {
     for (size_t i = 0; i < ptr->GetSize(ptr->p1); i++)
     {
@@ -256,10 +316,9 @@ void Game_scene::display_map() {
             this->addChild(ptr->arena[i][k].sprite_, -1);
         }
     }
-
 }
-*/
 
+/*
 void display_unit1(Scene* sc) {
     for (size_t i = 0; i < ::Game_scene::ptr->GetSize(::Game_scene::ptr->p1); i++)
     {
@@ -394,3 +453,4 @@ void display_map(Scene* sc) {
     }
 
 }
+*/

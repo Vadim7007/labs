@@ -113,6 +113,7 @@ bool ship::correct() noexcept {
 		this->hp = 0;
 		this->activate = false;
 		this->destroyed = true;
+		this->action = 0;
 		return false;
 	}
 
